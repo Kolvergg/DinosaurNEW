@@ -258,6 +258,588 @@ body.lock-scroll, html.lock-scroll {
 
 /* ===== Floating segmented-control overlay ===== */
 .segmented-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+}
+.segmented-overlay.is-ready { opacity: 1; }
+.indicator-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--indicator-width, 0px);
+    height: var(--indicator-height, 0px);
+    border-radius: 999px;
+    background: #253544;
+    transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
+    transition:
+        transform 330ms cubic-bezier(.2,.8,.2,1),
+        width 330ms cubic-bezier(.2,.8,.2,1),
+        height 330ms cubic-bezier(.2,.8,.2,1);
+    will-change: transform, width, height;
+}
+.indicator-pill {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    background: #253544;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
+    overflow: hidden;
+}
+.indicator-label {
+     font-family: 'SatoshiBold', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #fff;
+    font-size: var(--indicator-font-size, 14px);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: center;
+}
+.segmented-overlay.is-instant .indicator-mask {
+    transition: none;
+}
+</style>
+</head>
+<body class="lock-scroll">
+
+<div class="status-bar-fill"></div>
+
+<div id="app">
+
+  <!-- ===== screen-landing (was index.html) ===== -->
+  <div class="screen active" id="screen-landing">
+    <div class="image-container">
+        <img src="idjameshp.png" alt="">
+        <a href="#" class="invisible-button" data-enter="permit"></a>
+    </div>
+  </div>
+
+  <!-- ===== screen-permit (was main1.html) ===== -->
+  <div class="screen" id="screen-permit">
+    <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View Details</div>
+    </div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity1.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+        <div class="image-container">
+            <img src="idlucaa.png" alt="">
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-identity (was page2.html) ===== -->
+  <div class="screen" id="screen-identity">
+    <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View Details</div>
+    </div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity2.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-age (was page3.html) ===== -->
+  <div class="screen" id="screen-age">
+    <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View Details</div>
+    </div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity3.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-verify (was page4.html) ===== -->
+  <div class="screen" id="screen-verify">
+    <div class="page-wrapper">
+      <div class="header">
+        <div class="header-title">Verify Licence</div>
+        <div class="back-arrow" data-close>Close</div>
+      </div>
+      <div class="timer" data-timer>02:00</div>
+      <div class="content">
+        <div class="image-container">
+          <img src="idqr.png" alt="">
+          <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+          <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+          <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="segmented-overlay" aria-hidden="true">
+    <div class="indicator-mask">
+        <div class="indicator-pill">
+            <span class="indicator-label">Permit</span>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var app = document.getElementById('app');
+    var verifyTimerInterval = null;
+    var segmentedOverlay = document.querySelector('.segmented-overlay');
+    var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
+    var indicatorTarget = 'permit';
+    var indicatorFrame = null;
+    var indicatorSettleTimeout = null;
+    var indicatorLabels = {
+        permit: 'Permit',
+        identity: 'Identity',
+        age: 'Age'
+    };
+
+    function setLock(on) {
+        document.body.classList.toggle('lock-scroll', on);
+        document.documentElement.classList.toggle('lock-scroll', on);
+    }
+
+    function stopVerifyTimer() {
+        if (verifyTimerInterval) {
+            clearInterval(verifyTimerInterval);
+            verifyTimerInterval = null;
+        }
+    }
+
+    // Restarts the 2-minute countdown from scratch every time the verify
+    // screen is entered, matching the original "fresh page load = fresh
+    // timer" behaviour.
+    function startVerifyTimer() {
+        stopVerifyTimer();
+        var timeLeft = 120;
+        var timerEl = document.querySelector('#screen-verify [data-timer]');
+        function render() {
+            var m = Math.floor(timeLeft / 60);
+            var s = timeLeft % 60;
+            timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+        render();
+        verifyTimerInterval = setInterval(function () {
+            timeLeft--;
+            render();
+            if (timeLeft <= 0) stopVerifyTimer();
+        }, 1000);
+    }
+
+    // Re-triggers the slide-up entrance every time the verify screen
+    // becomes active.
+    function replaySlideUp() {
+        var wrapper = document.querySelector('#screen-verify .page-wrapper');
+        wrapper.classList.remove('slide-up');
+        wrapper.style.transform = 'translateY(100%)';
+        void wrapper.offsetWidth; // force reflow so the animation can restart
+        wrapper.classList.add('slide-up');
+    }
+
+    // Resets the landing screen back to its neutral (non-slid-out)
+    // position whenever it becomes active again, so returning via the
+    // back arrow doesn't show it mid-slide.
+    function resetLanding() {
+        var landing = document.getElementById('screen-landing');
+        landing.style.transition = 'none';
+        landing.style.transform = 'translateX(0)';
+    }
+
+    function isSegmentTarget(name) {
+        return name === 'permit' || name === 'identity' || name === 'age';
+    }
+
+    function getVisibleSegmentButton(name) {
+        var screen = app.querySelector('.screen.active');
+        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
+        return screen ? screen.querySelector('.btn-' + name) : null;
+    }
+
+    function positionIndicator(button, instant) {
+        if (!button) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        var rect = button.getBoundingClientRect();
+        if (!rect.width || !rect.height) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        segmentedOverlay.classList.toggle('is-instant', !!instant);
+        segmentedOverlay.style.setProperty('--indicator-x', (rect.left + window.scrollX - 4) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', (rect.top + window.scrollY + 3) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', (rect.width + 6) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', (rect.height - 3) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, rect.height * 0.38)) + 'px');
+        indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
+        segmentedOverlay.classList.add('is-ready');
+
+        if (instant) {
+            requestAnimationFrame(function () {
+                segmentedOverlay.classList.remove('is-instant');
+            });
+        }
+    }
+
+    function settleIndicator() {
+        if (indicatorSettleTimeout) clearTimeout(indicatorSettleTimeout);
+        indicatorSettleTimeout = setTimeout(function () {
+            indicatorSettleTimeout = null;
+            updateIndicator(true);
+        }, 360);
+    }
+
+    function updateIndicator(instant) {
+        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
+        indicatorFrame = requestAnimationFrame(function () {
+            indicatorFrame = null;
+            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
+        });
+    }
+
+    function switchScreen(name) {
+        var current = app.querySelector('.screen.active');
+        var next = document.getElementById('screen-' + name);
+        if (!next || next === current) return;
+
+        if (current) current.classList.remove('active', 'entering');
+        if (current && current.id === 'screen-verify') stopVerifyTimer();
+
+        if (name === 'landing') resetLanding();
+
+        next.classList.add('active', 'entering');
+        setTimeout(function () { next.classList.remove('entering'); }, 200);
+
+        setLock(name === 'landing' || name === 'verify');
+
+        if (name === 'verify') {
+            replaySlideUp();
+            startVerifyTimer();
+        }
+    }
+
+    // Landing screen's button keeps its original working slide-out
+    // motion, then switches screen in-app instead of navigating.
+    document.querySelector('[data-enter]').addEventListener('click', function (e) {
+        e.preventDefault();
+        var landing = document.getElementById('screen-landing');
+        landing.style.transition = 'transform 0.5s ease';
+        landing.style.transform = 'translateX(-100vw)';
+        setTimeout(function () {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(true);
+        }, 500);
+    });
+
+    // All other in-app buttons
+    app.querySelectorAll('[data-target]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var target = link.getAttribute('data-target');
+            if (isSegmentTarget(target)) indicatorTarget = target;
+            switchScreen(target);
+            updateIndicator(false);
+            if (isSegmentTarget(target)) settleIndicator();
+        });
+    });
+
+    // Back arrows now return to the landing screen in-app, instead of a
+    // real navigation to index.html — this was the other place a full
+    // page load could happen and trigger the Safari-chrome flash.
+    app.querySelectorAll('[data-back]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            switchScreen('landing');
+            updateIndicator(true);
+        });
+    });
+
+    app.querySelectorAll('[data-close]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(false);
+            settleIndicator();
+        });
+    });
+
+    window.addEventListener('resize', function () { updateIndicator(true); });
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function () { updateIndicator(true); });
+    }
+    updateIndicator(true);
+
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+    document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+})();
+</script>
+</body>
+</html>
+/* ===== Screen switcher ===== */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* Fixed white bar painted over the notch/Dynamic Island area. Sits above
+   everything but is NOT part of page flow, so it can't shift any existing
+   header height or button position. */
+.status-bar-fill {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top);
+    background: #ff00aa; /* TEMP diagnostic color — will be set back to white */
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* Lightweight fade used when switching into permit/identity/age/verify */
+.screen.entering {
+    animation: screenFadeIn 0.18s ease;
+}
+@keyframes screenFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Locks scroll while the landing screen OR the verify screen is active */
+body.lock-scroll, html.lock-scroll {
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    overscroll-behavior: none;
+    touch-action: none;
+}
+
+/* ===== #screen-landing (was index.html) ===== */
+#screen-landing .image-container {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-color: #eef2f3;
+}
+#screen-landing .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+#screen-landing .invisible-button {
+    position: absolute;
+    bottom: 11.3%;
+    left: 6%;
+    width: 88%;
+    height: 12%;
+    cursor: pointer;
+    z-index: 10;
+    text-decoration: none;
+}
+
+/* ===== #screen-permit (was main1.html) ===== */
+#screen-permit .header {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+    padding: 18px 0;
+}
+#screen-permit .back-arrow {
+    position: absolute;
+    left: 20px;
+    color: #283442;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+#screen-permit .back-arrow svg { width: 24px; height: 24px; }
+#screen-permit .header-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #283442;
+    text-align: center;
+}
+#screen-permit .content {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+#screen-permit .image-container { width: 100%; position: relative; display: block; }
+#screen-permit .image-container img { width: 100%; height: auto; display: block; }
+#screen-permit .invisible-button {
+    position: absolute;
+    cursor: pointer;
+    z-index: 50;
+    text-decoration: none;
+    border-radius: 50px;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none;
+    background: transparent;
+}
+#screen-permit .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
+#screen-permit .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
+#screen-permit .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
+#screen-permit .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
+
+/* ===== #screen-identity / #screen-age (was page2.html / page3.html) ===== */
+#screen-identity .header, #screen-age .header {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    background-color: white;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+#screen-identity .back-arrow, #screen-age .back-arrow {
+    position: absolute;
+    left: 20px;
+    color: #283442;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+#screen-identity .back-arrow svg, #screen-age .back-arrow svg { width: 24px; height: 24px; }
+#screen-identity .header-title, #screen-age .header-title {
+    color: #283442;
+    font-size: 18px;
+    font-weight: 500;
+}
+#screen-identity .content, #screen-age .content { display: flex; flex-direction: column; }
+#screen-identity .image-container, #screen-age .image-container { width: 100%; display: block; position: relative; }
+#screen-identity .image-container img, #screen-age .image-container img { width: 100%; height: auto; display: block; }
+#screen-identity .invisible-button, #screen-age .invisible-button {
+    position: absolute;
+    cursor: pointer;
+    z-index: 50;
+    text-decoration: none;
+    border-radius: 50px;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none;
+    background: transparent;
+}
+#screen-identity .btn-permit,   #screen-age .btn-permit   { left: 6.4%; top: 48%; width: 28%; height: 4.6%; }
+#screen-identity .btn-identity, #screen-age .btn-identity { left: 36%;  top: 48%; width: 28%; height: 4.6%; }
+#screen-identity .btn-age,      #screen-age .btn-age      { left: 66%;  top: 48%; width: 28%; height: 4.6%; }
+#screen-identity .btn-new,      #screen-age .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
+
+/* ===== #screen-verify (was page4.html) ===== */
+#screen-verify .page-wrapper {
+    width: 100%;
+    height: 100%;
+    transform: translateY(100%);
+}
+#screen-verify .page-wrapper.slide-up {
+    animation: slideUp 0.45s ease forwards;
+}
+@keyframes slideUp { to { transform: translateY(0); } }
+#screen-verify .header {
+    width: 100%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 100;
+}
+#screen-verify .header-title { font-size: 18px; font-weight: 500; color: #3a3a3a; }
+#screen-verify .back-arrow {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #2a2a2a;
+}
+#screen-verify .timer {
+    position: absolute;
+    top: 430px;
+    left: 64%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2025;
+    z-index: 50;
+}
+#screen-verify .content {
+    width: 100%;
+    height: calc(100% - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+}
+#screen-verify .image-container { width: 100vw; position: relative; }
+#screen-verify .image-container img { width: 100vw; height: auto; display: block; }
+#screen-verify .invisible-button { position: absolute; cursor: pointer; text-decoration: none; z-index: 50; }
+#screen-verify .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
+#screen-verify .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
+#screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
+
+/* ===== Floating segmented-control overlay ===== */
+.segmented-overlay {
     position: fixed;
     top: 0;
     left: 0;
