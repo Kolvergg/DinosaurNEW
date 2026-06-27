@@ -289,9 +289,9 @@ body.lock-scroll, html.lock-scroll {
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
     transition:
-        transform 700ms cubic-bezier(.2,.8,.2,1),
-        width 700ms cubic-bezier(.2,.8,.2,1),
-        height 700ms cubic-bezier(.2,.8,.2,1);
+        transform 330ms cubic-bezier(.2,.8,.2,1),
+        width 330ms cubic-bezier(.2,.8,.2,1),
+        height 330ms cubic-bezier(.2,.8,.2,1);
     will-change: transform, width, height;
 }
 .indicator-pill {
@@ -436,12 +436,12 @@ body.lock-scroll, html.lock-scroll {
     var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
     var indicatorTarget = 'permit';
     var indicatorFrame = null;
-    var indicatorSettleTimeout = null;
     var indicatorLabels = {
         permit: 'Permit',
         identity: 'Identity',
         age: 'Age'
     };
+    var screenFadeDuration = 280;
 
     function setLock(on) {
         document.body.classList.toggle('lock-scroll', on);
@@ -540,14 +540,6 @@ body.lock-scroll, html.lock-scroll {
         }
     }
 
-    function settleIndicator() {
-        if (indicatorSettleTimeout) clearTimeout(indicatorSettleTimeout);
-        indicatorSettleTimeout = setTimeout(function () {
-            indicatorSettleTimeout = null;
-            updateIndicator(true);
-        }, 360);
-    }
-
     function updateIndicator(instant) {
         if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
         indicatorFrame = requestAnimationFrame(function () {
@@ -584,7 +576,7 @@ body.lock-scroll, html.lock-scroll {
 
         if (current && softSwap) {
             prepareLeavingScreen(current);
-            setTimeout(function () { clearLeavingScreen(current); }, 300);
+            setTimeout(function () { clearLeavingScreen(current); }, screenFadeDuration + 20);
         } else if (current) {
             current.classList.remove('active', 'entering');
         }
@@ -593,7 +585,7 @@ body.lock-scroll, html.lock-scroll {
         if (name === 'landing') resetLanding();
 
         next.classList.add('active', 'entering');
-        setTimeout(function () { next.classList.remove('entering'); }, 200);
+        setTimeout(function () { next.classList.remove('entering'); }, screenFadeDuration);
 
         setLock(name === 'landing' || name === 'verify');
 
@@ -625,7 +617,6 @@ body.lock-scroll, html.lock-scroll {
             if (isSegmentTarget(target)) indicatorTarget = target;
             switchScreen(target);
             updateIndicator(false);
-            if (isSegmentTarget(target)) settleIndicator();
         });
     });
 
@@ -644,7 +635,6 @@ body.lock-scroll, html.lock-scroll {
             indicatorTarget = 'permit';
             switchScreen('permit');
             updateIndicator(false);
-            settleIndicator();
         });
     });
 
