@@ -250,44 +250,6 @@ body.lock-scroll, html.lock-scroll {
 #screen-verify .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
-
-/* ===== Floating segmented-control overlay ===== */
-.segmented-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    z-index: 60;
-    pointer-events: none;
-    opacity: 0;
-}
-.segmented-overlay.is-ready { opacity: 1; }
-.indicator-mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--indicator-width, 0px);
-    height: var(--indicator-height, 0px);
-    border-radius: 999px;
-    background: #fff;
-    transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
-    transition:
-        transform 330ms cubic-bezier(.2,.8,.2,1),
-        width 330ms cubic-bezier(.2,.8,.2,1),
-        height 330ms cubic-bezier(.2,.8,.2,1);
-    will-change: transform, width, height;
-}
-.indicator-pill {
-    position: absolute;
-    inset: var(--indicator-mask-inset, 2px);
-    border-radius: inherit;
-    background: #0678ff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
-}
-.segmented-overlay.is-instant .indicator-mask {
-    transition: none;
-}
 </style>
 </head>
 <body class="lock-scroll">
@@ -391,19 +353,10 @@ body.lock-scroll, html.lock-scroll {
 
 </div>
 
-<div class="segmented-overlay" aria-hidden="true">
-    <div class="indicator-mask">
-        <div class="indicator-pill"></div>
-    </div>
-</div>
-
 <script>
 (function () {
     var app = document.getElementById('app');
     var verifyTimerInterval = null;
-    var segmentedOverlay = document.querySelector('.segmented-overlay');
-    var indicatorTarget = 'permit';
-    var indicatorFrame = null;
 
     function setLock(on) {
         document.body.classList.toggle('lock-scroll', on);
@@ -456,57 +409,6 @@ body.lock-scroll, html.lock-scroll {
         landing.style.transform = 'translateX(0)';
     }
 
-    function isSegmentTarget(name) {
-        return name === 'permit' || name === 'identity' || name === 'age';
-    }
-
-    function getVisibleSegmentButton(name) {
-        var screen = app.querySelector('.screen.active');
-        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
-        return screen ? screen.querySelector('.btn-' + name) : null;
-    }
-
-    function positionIndicator(button, instant) {
-        if (!button) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        var rect = button.getBoundingClientRect();
-        if (!rect.width || !rect.height) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        var maskInset = Math.max(2, Math.min(4, rect.height * 0.09));
-        segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', rect.left + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', rect.top + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', rect.width + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', rect.height + 'px');
-        segmentedOverlay.style.setProperty('--indicator-mask-inset', maskInset + 'px');
-        segmentedOverlay.classList.add('is-ready');
-
-        if (instant) {
-            requestAnimationFrame(function () {
-                segmentedOverlay.classList.remove('is-instant');
-            });
-        }
-    }
-
-    function moveIndicator(name) {
-        if (isSegmentTarget(name)) indicatorTarget = name;
-        positionIndicator(getVisibleSegmentButton(indicatorTarget), false);
-    }
-
-    function updateIndicator(instant) {
-        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
-        indicatorFrame = requestAnimationFrame(function () {
-            indicatorFrame = null;
-            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
-        });
-    }
-
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
@@ -535,21 +437,14 @@ body.lock-scroll, html.lock-scroll {
         var landing = document.getElementById('screen-landing');
         landing.style.transition = 'transform 0.5s ease';
         landing.style.transform = 'translateX(-100vw)';
-        setTimeout(function () {
-            indicatorTarget = 'permit';
-            switchScreen('permit');
-            updateIndicator(true);
-        }, 500);
+        setTimeout(function () { switchScreen('permit'); }, 500);
     });
 
     // All other in-app buttons
     app.querySelectorAll('[data-target]').forEach(function (link) {
         link.addEventListener('click', function (e) {
             e.preventDefault();
-            var target = link.getAttribute('data-target');
-            if (isSegmentTarget(target)) moveIndicator(target);
-            switchScreen(target);
-            updateIndicator(false);
+            switchScreen(link.getAttribute('data-target'));
         });
     });
 
@@ -557,27 +452,12 @@ body.lock-scroll, html.lock-scroll {
     // real navigation to index.html — this was the other place a full
     // page load could happen and trigger the Safari-chrome flash.
     app.querySelectorAll('[data-back]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            switchScreen('landing');
-            updateIndicator(true);
-        });
+        btn.addEventListener('click', function () { switchScreen('landing'); });
     });
 
     app.querySelectorAll('[data-close]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            moveIndicator('permit');
-            switchScreen('permit');
-            updateIndicator(false);
-        });
+        btn.addEventListener('click', function () { switchScreen('permit'); });
     });
-
-    window.addEventListener('resize', function () { updateIndicator(true); });
-    window.addEventListener('scroll', function () { updateIndicator(true); }, { passive: true });
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', function () { updateIndicator(true); });
-        window.visualViewport.addEventListener('scroll', function () { updateIndicator(true); });
-    }
-    updateIndicator(true);
 
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
