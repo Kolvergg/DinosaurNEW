@@ -274,8 +274,8 @@ body.lock-scroll, html.lock-scroll {
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
     transition:
         transform 330ms cubic-bezier(.2,.8,.2,1),
-        width 340ms cubic-bezier(.2,.8,.2,1),
-        height 325ms cubic-bezier(.2,.8,.2,1);
+        width 330ms cubic-bezier(.2,.8,.2,1),
+        height 330ms cubic-bezier(.2,.8,.2,1);
     will-change: transform, width, height;
 }
 .indicator-pill {
@@ -500,10 +500,10 @@ body.lock-scroll, html.lock-scroll {
         }
 
         segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', rect.left + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', rect.top + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', rect.width + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', rect.height + 'px');
+        segmentedOverlay.style.setProperty('--indicator-x', (rect.left - 1) + 'px');
+segmentedOverlay.style.setProperty('--indicator-y', (rect.top + 1) + 'px');
+segmentedOverlay.style.setProperty('--indicator-width', (rect.width + 2) + 'px');
+segmentedOverlay.style.setProperty('--indicator-height', (rect.height - 1) + 'px');
         segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, rect.height * 0.38)) + 'px');
         indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
         segmentedOverlay.classList.add('is-ready');
