@@ -41,6 +41,14 @@ body {
 /* Fixed white bar painted over the notch/Dynamic Island area. Sits above
    everything but is NOT part of page flow, so it can't shift any existing
    header height or button position. */
+.status-bar-fill {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top);
+    background: white; /* TEMP diagnostic color — will be set back to white */
+    z-index: 9999;
+    pointer-events: none;
+}
 
 /* Lightweight fade used when switching into permit/identity/age/verify */
 .screen.entering {
