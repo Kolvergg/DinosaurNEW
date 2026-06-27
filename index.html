@@ -250,6 +250,56 @@ body.lock-scroll, html.lock-scroll {
 #screen-verify .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
+
+/* ===== Floating segmented-control overlay ===== */
+.segmented-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+}
+.segmented-overlay.is-ready { opacity: 1; }
+.indicator-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--indicator-width, 0px);
+    height: var(--indicator-height, 0px);
+    border-radius: 999px;
+    background: #0678ff;
+    transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
+    transition:
+        transform 330ms cubic-bezier(.2,.8,.2,1),
+        width 330ms cubic-bezier(.2,.8,.2,1),
+        height 330ms cubic-bezier(.2,.8,.2,1);
+    will-change: transform, width, height;
+}
+.indicator-pill {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    background: #0678ff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
+    overflow: hidden;
+}
+.indicator-label {
+    color: #fff;
+    font-size: var(--indicator-font-size, 14px);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: center;
+}
+.segmented-overlay.is-instant .indicator-mask {
+    transition: none;
+}
 </style>
 </head>
 <body class="lock-scroll">
@@ -353,10 +403,28 @@ body.lock-scroll, html.lock-scroll {
 
 </div>
 
+<div class="segmented-overlay" aria-hidden="true">
+    <div class="indicator-mask">
+        <div class="indicator-pill">
+            <span class="indicator-label">Permit</span>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     var app = document.getElementById('app');
     var verifyTimerInterval = null;
+    var segmentedOverlay = document.querySelector('.segmented-overlay');
+    var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
+    var indicatorTarget = 'permit';
+    var indicatorFrame = null;
+    var indicatorSettleTimeout = null;
+    var indicatorLabels = {
+        permit: 'Permit',
+        identity: 'Identity',
+        age: 'Age'
+    };
 
     function setLock(on) {
         document.body.classList.toggle('lock-scroll', on);
@@ -409,6 +477,60 @@ body.lock-scroll, html.lock-scroll {
         landing.style.transform = 'translateX(0)';
     }
 
+    function isSegmentTarget(name) {
+        return name === 'permit' || name === 'identity' || name === 'age';
+    }
+
+    function getVisibleSegmentButton(name) {
+        var screen = app.querySelector('.screen.active');
+        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
+        return screen ? screen.querySelector('.btn-' + name) : null;
+    }
+
+    function positionIndicator(button, instant) {
+        if (!button) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        var rect = button.getBoundingClientRect();
+        if (!rect.width || !rect.height) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        segmentedOverlay.classList.toggle('is-instant', !!instant);
+        segmentedOverlay.style.setProperty('--indicator-x', rect.left + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', rect.top + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', rect.width + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', rect.height + 'px');
+        segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, rect.height * 0.38)) + 'px');
+        indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
+        segmentedOverlay.classList.add('is-ready');
+
+        if (instant) {
+            requestAnimationFrame(function () {
+                segmentedOverlay.classList.remove('is-instant');
+            });
+        }
+    }
+
+    function settleIndicator() {
+        if (indicatorSettleTimeout) clearTimeout(indicatorSettleTimeout);
+        indicatorSettleTimeout = setTimeout(function () {
+            indicatorSettleTimeout = null;
+            updateIndicator(true);
+        }, 360);
+    }
+
+    function updateIndicator(instant) {
+        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
+        indicatorFrame = requestAnimationFrame(function () {
+            indicatorFrame = null;
+            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
+        });
+    }
+
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
@@ -437,14 +559,22 @@ body.lock-scroll, html.lock-scroll {
         var landing = document.getElementById('screen-landing');
         landing.style.transition = 'transform 0.5s ease';
         landing.style.transform = 'translateX(-100vw)';
-        setTimeout(function () { switchScreen('permit'); }, 500);
+        setTimeout(function () {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(true);
+        }, 500);
     });
 
     // All other in-app buttons
     app.querySelectorAll('[data-target]').forEach(function (link) {
         link.addEventListener('click', function (e) {
             e.preventDefault();
-            switchScreen(link.getAttribute('data-target'));
+            var target = link.getAttribute('data-target');
+            if (isSegmentTarget(target)) indicatorTarget = target;
+            switchScreen(target);
+            updateIndicator(false);
+            if (isSegmentTarget(target)) settleIndicator();
         });
     });
 
@@ -452,12 +582,28 @@ body.lock-scroll, html.lock-scroll {
     // real navigation to index.html — this was the other place a full
     // page load could happen and trigger the Safari-chrome flash.
     app.querySelectorAll('[data-back]').forEach(function (btn) {
-        btn.addEventListener('click', function () { switchScreen('landing'); });
+        btn.addEventListener('click', function () {
+            switchScreen('landing');
+            updateIndicator(true);
+        });
     });
 
     app.querySelectorAll('[data-close]').forEach(function (btn) {
-        btn.addEventListener('click', function () { switchScreen('permit'); });
+        btn.addEventListener('click', function () {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(false);
+            settleIndicator();
+        });
     });
+
+    window.addEventListener('resize', function () { updateIndicator(true); });
+    window.addEventListener('scroll', function () { updateIndicator(true); }, { passive: true });
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function () { updateIndicator(true); });
+        window.visualViewport.addEventListener('scroll', function () { updateIndicator(true); });
+    }
+    updateIndicator(true);
 
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
