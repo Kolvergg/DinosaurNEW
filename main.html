@@ -3,6 +3,9 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>View Details</title>
 <style>
 /* ===== Shared reset (identical across all original pages) ===== */
@@ -26,6 +29,19 @@ body {
 /* ===== Screen switcher ===== */
 .screen { display: none; }
 .screen.active { display: block; }
+
+/* Fixed white bar painted over the notch/Dynamic Island area. Sits above
+   everything but is NOT part of page flow, so it can't shift any existing
+   header height or button position — it just paints over what iOS leaves
+   transparent under viewport-fit=cover. */
+.status-bar-fill {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top);
+    background: #ffffff;
+    z-index: 9999;
+    pointer-events: none;
+}
 
 /* Lightweight fade used on every switch. NOTE: this is new — the original
    per-page transitions (slide-down-out, content slide) never actually
@@ -208,6 +224,8 @@ body.lock-scroll, html.lock-scroll {
 </style>
 </head>
 <body>
+
+<div class="status-bar-fill"></div>
 
 <div id="app">
 
