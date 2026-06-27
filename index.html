@@ -1,1 +1,65 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta charset="UTF-8">
+<title>Landing Page</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #eef2f3;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    html, body {
+        touch-action: pan-x pan-y;
+    }
+    .image-container {
+        width: 100%;
+        position: relative;
+        display: block;
+        min-height: 100vh;
+    }
+    .image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    .invisible-button {
+        position: absolute;
+        bottom: 11.3%;
+        left: 6%;
+        width: 88%;
+        height: 12%;
+        cursor: pointer;
+        z-index: 10;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+    <div class="image-container">
+        <img src="idjameshp.png" alt="">
+        <a href="main.html" class="invisible-button" data-transition="slide-left"></a>
+    </div>
+    <script>
+        document.querySelector('a[data-transition="slide-left"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            var target = this.getAttribute('href');
+            document.body.style.transition = 'transform 0.5s ease';
+            document.body.style.transform = 'translateX(-100vw)';
+            setTimeout(function () { window.location.href = target; }, 500);
+        });
+    </script>
+    <script>
+        document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+        document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+        document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+    </script>
+</body>
+</html>
