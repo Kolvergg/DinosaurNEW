@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta charset="UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<!-- Custom Home Screen icon — replace "icon.png" with your actual icon
-     filename once it's uploaded, then re-add to Home Screen. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ffffff">
+<!-- Custom Home Screen icon — see note in chat about image requirements
+     and the need to re-add to Home Screen once this is uploaded. -->
 <link rel="apple-touch-icon" href="vicroads.png">
 <title>View Details</title>
 <style>
@@ -38,15 +39,15 @@ body {
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* Fixed white bar painted over the notch/Dynamic Island area. Requires
-   black-translucent status bar style above — that's what lets the page
-   canvas reach this area at all. */
+/* Fixed white bar painted over the notch/Dynamic Island area. Sits above
+   everything but is NOT part of page flow, so it can't shift any existing
+   header height or button position. */
 .status-bar-fill {
     position: fixed;
     top: 0; left: 0; right: 0;
-    height: calc(env(safe-area-inset-top) + 2px);
-    background: #ffffff;
-    z-index: 99999;
+    height: env(safe-area-inset-top);
+    background: #FFFFFF; /* TEMP diagnostic color — will be set back to white */
+    z-index: 9999;
     pointer-events: none;
 }
 
@@ -110,13 +111,9 @@ body.lock-scroll, html.lock-scroll {
 }
 
 /* ===== #screen-permit (was main1.html) ===== */
-#screen-permit {
-    padding-top: env(safe-area-inset-top);
-}
 #screen-permit .header {
     position: sticky;
-    top: env(safe-area-inset-top);
-    left: 0; right: 0;
+    top: 0; left: 0; right: 0;
     background-color: white;
     display: flex;
     align-items: center;
@@ -169,13 +166,9 @@ body.lock-scroll, html.lock-scroll {
 #screen-permit .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
 
 /* ===== #screen-identity / #screen-age (was page2.html / page3.html) ===== */
-#screen-identity, #screen-age {
-    padding-top: env(safe-area-inset-top);
-}
 #screen-identity .header, #screen-age .header {
     position: sticky;
-    top: env(safe-area-inset-top);
-    left: 0; right: 0;
+    top: 0; left: 0; right: 0;
     background-color: white;
     height: 60px;
     display: flex;
@@ -223,9 +216,6 @@ body.lock-scroll, html.lock-scroll {
 #screen-identity .btn-new,      #screen-age .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
 
 /* ===== #screen-verify (was page4.html) ===== */
-#screen-verify {
-    padding-top: env(safe-area-inset-top);
-}
 #screen-verify .page-wrapper {
     width: 100%;
     height: 100%;
