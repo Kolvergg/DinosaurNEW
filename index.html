@@ -15,6 +15,13 @@
     @font-face {
     font-family: "SatoshiBold";
     src: url("./Satoshi-Bold.otf") format("opentype");
+
+         @font-face {
+    font-family: "LeagueSpartan";
+    src: url("./LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+}
 }
 /* ===== Shared reset ===== */
 * {
@@ -134,6 +141,7 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-permit .back-arrow svg { width: 24px; height: 24px; }
 #screen-permit .header-title {
+     font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 18px;
     font-weight: 500;
     color: #283442;
@@ -190,6 +198,7 @@ body.lock-scroll, html.lock-scroll {
 #screen-identity .back-arrow svg, #screen-age .back-arrow svg { width: 24px; height: 24px; }
 #screen-identity .header-title, #screen-age .header-title {
     color: #283442;
+  font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 18px;
     font-weight: 500;
 }
@@ -237,6 +246,7 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-verify .header-title { font-size: 18px; font-weight: 500; color: #3a3a3a; }
 #screen-verify .back-arrow {
+       font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
     position: absolute;
     right: 20px;
     cursor: pointer;
