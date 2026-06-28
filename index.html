@@ -42,8 +42,21 @@ body {
 }
 
 /* ===== Screen switcher ===== */
-.screen { display: none; }
-.screen.active { display: block; }
+.screen {
+
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+
+}
+
+.screen.active {
+
+    opacity: 1;
+    pointer-events: auto;
+
+}
 
 /* Fixed white bar painted over the notch/Dynamic Island area. Sits above
    everything but is NOT part of page flow, so it can't shift any existing
@@ -594,7 +607,14 @@ body.lock-scroll, html.lock-scroll {
             prepareLeavingScreen(current);
             setTimeout(function () { clearLeavingScreen(current); }, screenFadeDuration + 20);
         } else if (current) {
-            current.classList.remove('active', 'entering');
+            if (current) {
+    current.classList.remove('entering');
+    current.classList.add('leaving');
+
+    setTimeout(function () {
+        current.classList.remove('active', 'leaving');
+    }, 280);
+}
         }
         if (current && current.id === 'screen-verify') stopVerifyTimer();
 
