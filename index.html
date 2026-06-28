@@ -42,8 +42,14 @@ body {
 }
 
 /* ===== Screen switcher ===== */
-.screen { display: none; }
-.screen.active { display: block; }
+.screen {
+    opacity: 1;
+    transition: opacity 0.28s ease;
+}
+
+.screen.leaving {
+    opacity: 0;
+}
 
 /* Fixed white bar painted over the notch/Dynamic Island area. Sits above
    everything but is NOT part of page flow, so it can't shift any existing
