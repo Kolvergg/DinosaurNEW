@@ -43,8 +43,15 @@ body {
 
 /* ===== Screen switcher ===== */
 .screen {
+    display: block;
+    opacity: 0;
+    transform: scale(1.01);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.screen.active {
     opacity: 1;
-    transition: opacity 0.28s ease;
+    transform: scale(1);
 }
 
 .screen.leaving {
