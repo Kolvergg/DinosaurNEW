@@ -455,6 +455,10 @@ body.lock-scroll, html.lock-scroll {
     };
     var screenFadeDuration = 280;
 
+    function shouldCorrectScroll() {
+        return window.scrollY > 120;
+    }
+
     function setLock(on) {
         document.body.classList.toggle('lock-scroll', on);
         document.documentElement.classList.toggle('lock-scroll', on);
@@ -622,15 +626,31 @@ body.lock-scroll, html.lock-scroll {
     });
 
     // All other in-app buttons
-    app.querySelectorAll('[data-target]').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            var target = link.getAttribute('data-target');
-            if (isSegmentTarget(target)) indicatorTarget = target;
+   app.querySelectorAll('[data-target]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        var target = link.getAttribute('data-target');
+        if (isSegmentTarget(target)) indicatorTarget = target;
+
+        function doSwitch() {
             switchScreen(target);
             updateIndicator(false);
-        });
+        }
+
+        // only fix scroll if user is actually scrolled down
+        if (window.scrollY > 120) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            setTimeout(doSwitch, 250);
+        } else {
+            doSwitch();
+        }
     });
+});
 
     // Back arrows now return to the landing screen in-app, instead of a
     // real navigation to index.html — this was the other place a full
