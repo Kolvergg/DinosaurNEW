@@ -626,7 +626,7 @@ body.lock-scroll, html.lock-scroll {
     var screenFadeDuration = 280;
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
-    function getFormattedRefreshTime() {
+ function getFormattedRefreshTime() {
         var now = new Date();
         var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -644,14 +644,16 @@ body.lock-scroll, html.lock-scroll {
         if (hours === 0) hours = 12;
         var minutesStr = minutes < 10 ? '0' + minutes : minutes;
         
-        return 'Last refreshed: ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
+        // Wrap the prefix in a <strong> tag
+        return '<strong>Last refreshed:</strong> ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
     }
 
     function initRefreshTime() {
         var refreshText = getFormattedRefreshTime();
         var refreshBars = document.querySelectorAll('[data-refresh-time]');
         refreshBars.forEach(function (bar) {
-            bar.textContent = refreshText;
+            // Change from .textContent to .innerHTML to parse the strong tag
+            bar.innerHTML = refreshText; 
         });
     }
 
