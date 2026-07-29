@@ -42,15 +42,20 @@ body {
 }
 
 /* ===== Refresh Timestamp Bar ===== */
+/* ===== Refresh Timestamp Bar ===== */
 .refresh-bar {
     background-color: #f4f5f7;
-    color: #555e68;
+    color: #3c4b60;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     text-align: center;
     padding: 8px 12px;
     border-bottom: 1px solid #e2e8f0;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.refresh-bar strong {
+    font-weight: 600;
 }
 
 /* ===== Screen switcher ===== */
@@ -517,7 +522,7 @@ body.lock-scroll, html.lock-scroll {
         </div>
         <div class="header-title">View details</div>
     </div>
-    <div class="refresh-bar" data-refresh-time>Last refresh: Wed 29 Jul 2026 9:46pm</div>
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
             <img src="identity1.jpg" alt="">
@@ -541,8 +546,8 @@ body.lock-scroll, html.lock-scroll {
             </svg>
         </div>
         <div class="header-title">View details</div>
-    </div>
-    <div class="refresh-bar" data-refresh-time>Last refresh: Wed 29 Jul 2026 9:46pm</div>
+    </div>e
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
             <img src="identity2.jpg" alt="">
@@ -564,7 +569,7 @@ body.lock-scroll, html.lock-scroll {
         </div>
         <div class="header-title">View details</div>
     </div>
-    <div class="refresh-bar" data-refresh-time>Last refresh: Wed 29 Jul 2026 9:46pm</div>
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
             <img src="identity3.jpg" alt="">
@@ -639,7 +644,7 @@ body.lock-scroll, html.lock-scroll {
         if (hours === 0) hours = 12;
         var minutesStr = minutes < 10 ? '0' + minutes : minutes;
         
-        return 'Last refresh: ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
+        return 'Last refreshed: ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
     }
 
     function initRefreshTime() {
