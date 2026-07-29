@@ -254,6 +254,21 @@ body.lock-scroll, html.lock-scroll {
     flex-direction: column;
     background-color: white;
 }
+     #screen-permit .last-refresh {
+    background: #fff;
+    padding: 14px 20px;
+    border-bottom: 1px solid #ececec;
+    font-size: 14px;
+    color: #6d6d6d;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+#screen-permit .last-refresh span {
+    color: #283442;
+    font-weight: 600;
+}
+     
 #screen-permit .image-container { width: 100%; position: relative; display: block; }
 #screen-permit .image-container img { width: 100%; height: auto; display: block; }
 #screen-permit .invisible-button {
@@ -496,7 +511,11 @@ body.lock-scroll, html.lock-scroll {
   </div>
 
   <!-- ===== screen-permit (was main1.html) ===== -->
-  <div class="screen" id="screen-permit">
+ <div class="last-refresh">
+
+    Last refresh: <span id="lastRefreshTime"></span>
+
+</div> <div class="screen" id="screen-permit">
     <div class="header">
         <div class="back-arrow" data-back>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -620,7 +639,36 @@ body.lock-scroll, html.lock-scroll {
             verifyTimerInterval = null;
         }
     }
+function updateLastRefresh() {
+    var now = new Date();
 
+    var days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+    var months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
+    var day = days[now.getDay()];
+    var date = now.getDate();
+    var month = months[now.getMonth()];
+    var year = now.getFullYear();
+
+    var hours = now.getHours();
+    var minutes = String(now.getMinutes()).padStart(2, "0");
+
+    var ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    var formatted =
+        day + " " +
+        date + " " +
+        month + " " +
+        year + " " +
+        hours + ":" +
+        minutes + " " +
+        ampm;
+
+    var el = document.getElementById("lastRefreshTime");
+    if (el) el.textContent = formatted;
+}
     // Restarts the 2-minute countdown from scratch every time the verify
     // screen is entered, matching the original "fresh page load = fresh
     // timer" behaviour.
@@ -734,7 +782,7 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
-    function switchScreen(name) {
+    function switchScreen(name) {     
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
         if (!next || next === current) return;
@@ -751,6 +799,11 @@ body.lock-scroll, html.lock-scroll {
         if (name === 'landing') resetLanding();
 
         next.classList.add('active', 'entering');
+         if (name === 'permit') {
+
+    updateLastRefresh();
+
+}
         setTimeout(function () { next.classList.remove('entering'); }, screenFadeDuration);
 
         setLock(name === 'landing' || name === 'verify' || name === 'passcode');
