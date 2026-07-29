@@ -243,9 +243,11 @@ body.lock-scroll, html.lock-scroll {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     z-index: 100;
     padding: 18px 0;
+    box-shadow: none; /* Removed the shadow */
+    transition: box-shadow 0.2s ease; /* Added smooth fade */
+}
 }
 #screen-permit .back-arrow {
     position: absolute;
@@ -300,8 +302,12 @@ body.lock-scroll, html.lock-scroll {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     z-index: 100;
+    box-shadow: none; /* Removed the shadow */
+    transition: box-shadow 0.2s ease; /* Added smooth fade */
+}
+     .header.is-scrolled {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
 #screen-identity .back-arrow, #screen-age .back-arrow {
     position: absolute;
@@ -924,7 +930,20 @@ body.lock-scroll, html.lock-scroll {
             updateIndicator(false);
         });
     });
-
+// Watch for scrolling to toggle the header shadow
+    window.addEventListener('scroll', function () {
+        var headers = document.querySelectorAll('.header');
+        // If scrolled more than 5 pixels down, add the shadow
+        var isScrolled = window.scrollY > 5; 
+        
+        headers.forEach(function (header) {
+            if (isScrolled) {
+                header.classList.add('is-scrolled');
+            } else {
+                header.classList.remove('is-scrolled');
+            }
+        });
+    });
     window.addEventListener('resize', function () { updateIndicator(true); });
     updateIndicator(true);
 
