@@ -104,6 +104,33 @@ body.lock-scroll, html.lock-scroll {
     touch-action: none;
 }
 
+/* ===== Loading Screen ===== */
+#screen-loader {
+    background-color: #F7F9F7;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+#screen-loader.active {
+    display: flex !important;
+}
+.loader-spinner {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, rgba(61, 190, 61, 0) 0%, #3DBE3D 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent 19px, #000 20px);
+    mask: radial-gradient(farthest-side, transparent 19px, #000 20px);
+    animation: spin 0.85s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* ===== #screen-passcode (new front gate) ===== */
 #screen-passcode {
     background: #ffffff;
@@ -464,6 +491,11 @@ body.lock-scroll, html.lock-scroll {
 
 <div id="app">
 
+  <!-- ===== screen-loader ===== -->
+  <div class="screen" id="screen-loader">
+    <div class="loader-spinner"></div>
+  </div>
+
   <!-- ===== screen-passcode (new front gate, shown first) ===== -->
   <div class="screen active" id="screen-passcode">
     <div class="pc-wrap">
@@ -797,6 +829,28 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
+    function showLoaderThen(targetScreenName, callback) {
+        var current = app.querySelector('.screen.active');
+        var loader = document.getElementById('screen-loader');
+        
+        // Instantly hide current screen
+        if (current) current.classList.remove('active', 'entering');
+        
+        // Show the loader and lock the screen
+        loader.classList.add('active');
+        setLock(true);
+        
+        // Wait exactly 1 second, then proceed
+        setTimeout(function() {
+            loader.classList.remove('active');
+            if (callback) {
+                callback();
+            } else {
+                switchScreen(targetScreenName);
+            }
+        }, 1000);
+    }
+
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
@@ -847,7 +901,7 @@ body.lock-scroll, html.lock-scroll {
 
         function unlockApp() {
             indicatorTarget = 'permit';
-            switchScreen('landing');
+            showLoaderThen('landing');
         }
 
         function handleDigit(el) {
@@ -878,18 +932,15 @@ body.lock-scroll, html.lock-scroll {
         updateDots();
     })();
 
-    // Landing screen's button keeps its original working slide-out
-    // motion, then switches screen in-app instead of navigating.
+    // Landing screen's button triggers the 1-second loader
+    // then switches screen in-app instead of navigating.
     document.querySelector('[data-enter]').addEventListener('click', function (e) {
         e.preventDefault();
-        var landing = document.getElementById('screen-landing');
-        landing.style.transition = 'transform 0.5s ease';
-        landing.style.transform = 'translateX(-100vw)';
-        setTimeout(function () {
+        showLoaderThen('permit', function() {
             indicatorTarget = 'permit';
             switchScreen('permit');
             updateIndicator(true);
-        }, 500);
+        });
     });
 
     // All other in-app buttons
