@@ -167,11 +167,10 @@ body.lock-scroll, html.lock-scroll {
     margin: 0 0 32px;
     line-height: 1.25;
     flex-shrink: 0;
-}
 #screen-passcode .pc-dots {
     display: flex;
     gap: 30px;
-    margin-bottom: auto;
+    margin-bottom: 56px; /* Fixed larger gap pushing keypad down */
     flex-shrink: 0;
 }
 #screen-passcode .pc-dot {
@@ -193,23 +192,22 @@ body.lock-scroll, html.lock-scroll {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    row-gap: 34px;
+    row-gap: 22px; /* Reduced from 34px for a sleeker compact fit */
     column-gap: 10px;
-}
 #screen-passcode .pc-key {
     background: none;
     border: none;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 23px; /* Smaller (down from 30px) */
+    font-weight: 400; /* Thinner (down from 700) */
     color: #111;
-    padding: 14px 0;
+    padding: 10px 0; /* Slightly tighter touch area */
     cursor: pointer;
     border-radius: 12px;
     transition: opacity 120ms ease;
     -webkit-user-select: none;
     user-select: none;
-       -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent;
     outline: none;
 }
 #screen-passcode .pc-key:active,
@@ -217,8 +215,8 @@ body.lock-scroll, html.lock-scroll {
     opacity: 0.25;
 }
 #screen-passcode .pc-key.pc-text-key {
-    font-size: 17px;
-    font-weight: 600;
+    font-size: 14px; /* Smaller (down from 17px) */
+    font-weight: 400; /* Thinner (down from 600) */
 }
 #screen-passcode .pc-key.pc-icon-key {
     display: flex;
@@ -226,8 +224,9 @@ body.lock-scroll, html.lock-scroll {
     justify-content: center;
 }
 #screen-passcode .pc-key.pc-icon-key svg {
-    width: 26px;
-    height: 26px;
+    width: 21px; /* Smaller (down from 26px) */
+    height: 21px;
+    stroke-width: 1.6; /* Thinner line stroke */
 }
 #screen-passcode .pc-key:disabled {
     opacity: 0.2;
@@ -501,12 +500,13 @@ body.lock-scroll, html.lock-scroll {
   <div class="screen active" id="screen-passcode">
     <div class="pc-wrap">
       <div class="pc-lock-wrap">
-        <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
-          <path d="M32 42 V32 a18 18 0 0 1 36 0 v10" fill="none" stroke="#3DBE3D" stroke-width="9" stroke-linecap="round"/>
-          <rect x="18" y="40" width="64" height="46" rx="6" fill="#3DBE3D"/>
-          <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
-          <path d="M46 65 L42 78 H58 L54 65 Z" fill="#1E2A38"/>
-        </svg>
+       <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
+  <!-- Shortened upper loop/shackle -->
+  <path d="M32 42 V38 a18 18 0 0 1 36 0 v4" fill="none" stroke="#3DBE3D" stroke-width="9" stroke-linecap="round"/>
+  <rect x="18" y="40" width="64" height="46" rx="6" fill="#3DBE3D"/>
+  <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
+  <path d="M46 65 L42 78 H58 L54 65 Z" fill="#1E2A38"/>
+</svg>
       </div>
 
       <p class="pc-title">Please enter your existing PIN code</p>
