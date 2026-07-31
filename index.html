@@ -502,8 +502,10 @@ body.lock-scroll, html.lock-scroll {
     <div class="pc-wrap">
       <div class="pc-lock-wrap">
         <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
-          <path d="M32 42 V32 a18 18 0 0 1 36 0 v10" fill="none" stroke="#3DBE3D" stroke-width="9" stroke-linecap="round"/>
-          <rect x="18" y="40" width="64" height="46" rx="6" fill="#3DBE3D"/>
+          <!-- Shortened shackle with exact color #42b12a -->
+          <path d="M32 42 V38 a18 18 0 0 1 36 0 v4" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Body made nearly square (rx="1.5") -->
+          <rect x="18" y="40" width="64" height="46" rx="1.5" fill="#42b12a"/>
           <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
           <path d="M46 65 L42 78 H58 L54 65 Z" fill="#1E2A38"/>
         </svg>
