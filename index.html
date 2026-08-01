@@ -8,20 +8,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- Custom Home Screen icon — see note in chat about image requirements
      and the need to re-add to Home Screen once this is uploaded. -->
-<link rel="apple-touch-icon" href="vicroads.png">
+<link rel="apple-touch-icon" href="">
 <title>View details</title>
 <style>
 
     @font-face {
     font-family: "SatoshiBold";
     src: url("./Satoshi-Bold.otf") format("opentype");
-
-         @font-face {
+}
+@font-face {
     font-family: "LeagueSpartan";
     src: url("./LeagueSpartan-VariableFont_wght.ttf") format("truetype");
     font-weight: 100 900;
     font-style: normal;
-}
 }
 /* ===== Shared reset ===== */
 * {
@@ -457,7 +456,7 @@ body.lock-scroll, html.lock-scroll {
     border-radius: 999px;
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
-     transition:
+    transition:
         transform 520ms cubic-bezier(.22,1,.36,1),
         width 520ms cubic-bezier(.22,1,.36,1),
         height 520ms cubic-bezier(.22,1,.36,1);
@@ -505,7 +504,7 @@ body.lock-scroll, html.lock-scroll {
       <div class="pc-lock-wrap">
         <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
           <!-- Shortened shackle with exact color #42b12a -->
-       <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>-linecap="round"/>
+       <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>
           <!-- Body made nearly square (rx="1.5") -->
           <rect x="18" y="40" width="64" height="46" rx="1.5" fill="#42b12a"/>
           <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
@@ -570,14 +569,14 @@ body.lock-scroll, html.lock-scroll {
     <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
-            <img src="identity1.jpg" alt="">
+            <img src="" alt="">
             <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
             <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
             <a href="#" class="invisible-button btn-age"      data-target="age"></a>
             <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
         </div>
         <div class="image-container">
-            <img src="idlucaa.png" alt="">
+            <img src="" alt="">
         </div>
     </div>
   </div>
@@ -595,7 +594,7 @@ body.lock-scroll, html.lock-scroll {
     <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
-            <img src="identity2.jpg" alt="">
+            <img src="" alt="">
             <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
             <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
             <a href="#" class="invisible-button btn-age"      data-target="age"></a>
@@ -617,7 +616,7 @@ body.lock-scroll, html.lock-scroll {
     <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
-            <img src="identity3.jpg" alt="">
+            <img src="" alt="">
             <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
             <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
             <a href="#" class="invisible-button btn-age"      data-target="age"></a>
@@ -669,6 +668,16 @@ body.lock-scroll, html.lock-scroll {
         age: 'Age'
     };
     var screenFadeDuration = 280;
+
+    // ===== Pill sizing knobs =====
+    // How far the dark pill extends past the invisible button's own edges,
+    // in pixels. Raise PILL_EXPAND_X to make the pill wider; raise
+    // PILL_EXPAND_Y if it's not filling the full height of the drawn track
+    // in your background image. Since your track is baked into an image
+    // (not built in CSS), these are the two numbers to nudge until the
+    // pill visually matches the artwork — start here, adjust by eye.
+    var PILL_EXPAND_X = 10;
+    var PILL_EXPAND_Y = 4;
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
  function getFormattedRefreshTime() {
@@ -773,7 +782,8 @@ body.lock-scroll, html.lock-scroll {
         if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
         return screen ? screen.querySelector('.btn-' + name) : null;
     }
-function positionIndicator(button, instant) {
+
+    function positionIndicator(button, instant) {
         if (!button) {
             segmentedOverlay.classList.remove('is-ready');
             return;
@@ -789,35 +799,11 @@ function positionIndicator(button, instant) {
             container.appendChild(segmentedOverlay);
         }
 
-        // Same "bridge the gap between segments, fill the full zone" logic
-        // as the reference file — adapted to your layout, which measures
-        // the gap from actual button positions instead of reading CSS
-        // padding/gap off a shared track element (you don't have one).
-        var EDGE_INSET = 6;      // how far the pill extends past the first/last button toward the container edge
-        var VERTICAL_EXPAND = 4; // how far the pill extends past the button's own top/bottom
-
-        var segmentButtons = Array.prototype.slice
-            .call(container.querySelectorAll('.invisible-button[data-target]'))
-            .filter(function (b) { return isSegmentTarget(b.getAttribute('data-target')); })
-            .sort(function (a, b) { return a.offsetLeft - b.offsetLeft; });
-
-        var index = segmentButtons.indexOf(button);
-        var prev = segmentButtons[index - 1];
-        var next = segmentButtons[index + 1];
-
-        var left = prev
-            ? button.offsetLeft - (button.offsetLeft - (prev.offsetLeft + prev.offsetWidth)) / 2
-            : button.offsetLeft - EDGE_INSET;
-
-        var right = next
-            ? button.offsetLeft + button.offsetWidth + (next.offsetLeft - (button.offsetLeft + button.offsetWidth)) / 2
-            : button.offsetLeft + button.offsetWidth + EDGE_INSET;
-
         segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', left + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop - VERTICAL_EXPAND) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', (right - left) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight + VERTICAL_EXPAND * 2) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - PILL_EXPAND_X) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop - PILL_EXPAND_Y) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + PILL_EXPAND_X * 2) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight + PILL_EXPAND_Y * 2) + 'px');
         segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
         indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
         segmentedOverlay.classList.add('is-ready');
