@@ -437,6 +437,24 @@ body.lock-scroll, html.lock-scroll {
 #screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
 
 /* ===== Floating segmented-control overlay ===== */
+<title>Pill Slider — exact reference</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f4f5f7; padding:60px 24px; }
+
+  /* ============================================================
+     SPEC (v2 — adjusted per feedback: wider pill that fully fills
+     the track's interior zone, slower/smoother settle)
+     - duration:        520ms
+     - easing:          cubic-bezier(.22, 1, .36, 1)   (smooth decelerate, no overshoot)
+     - pill sizing:     fills full track interior height (track height minus
+                         track padding), and bridges the gap between segments
+                         horizontally so there's no visible outer-pill strip
+                         around it — see position() in the script below
+     - pill color:      #253544
+     - label:           #ffffff, weight 600
+     - corner radius:   999px (full pill)
+     ============================================================ */
+
   .pill-track {
     position: relative;
     display: inline-flex;
@@ -494,8 +512,9 @@ body.lock-scroll, html.lock-scroll {
   }
 
   .demo-note { max-width: 520px; margin: 24px auto 0; font-size: 13px; color: #8a94a3; text-align:center; }
-</style>     
+</style>
 </head>
+     
 <body class="lock-scroll">
 
 <div class="status-bar-fill"></div>
@@ -565,9 +584,480 @@ body.lock-scroll, html.lock-scroll {
     </div>
   </div>
 
+     <div style="display:flex; justify-content:center;">
+  <div class="pill-track" id="pillTrack" data-pill-track>
+    <button class="tab-btn is-active" data-page="permit">Permit</button>
+    <button class="tab-btn" data-page="identity">Identity</button>
+    <button class="tab-btn" data-page="age">Age</button>
+
+    <div class="segmented-overlay" id="segmentedOverlay" aria-hidden="true">
+      <div class="indicator-mask"></div>
+    </div>
+  </div>
+</div>
+
+<p class="demo-note">
+  Click the tabs, or open the console and run <code>PillIndicator.goTo('age')</code> —
+  both drive the exact same animation. That's the part to wire into your
+  navigation/routing code.
+</p>
+
+
   <!-- ===== screen-permit (was main1.html) ===== -->
   <div class="screen" id="screen-permit">
     <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View details</div>
+    </div>
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity1.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+        <div class="image-container">
+            <img src="idlucaa.png" alt="">
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-identity (was page2.html) ===== -->
+  <div class="screen" id="screen-identity">
+    <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View details</div>
+    </div>
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity2.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-age (was page3.html) ===== -->
+  <div class="screen" id="screen-age">
+    <div class="header">
+        <div class="back-arrow" data-back>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </div>
+        <div class="header-title">View details</div>
+    </div>
+    <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
+    <div class="content">
+        <div class="image-container">
+            <img src="identity3.jpg" alt="">
+            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+        </div>
+    </div>
+  </div>
+
+  <!-- ===== screen-verify (was page4.html) ===== -->
+  <div class="screen" id="screen-verify">
+    <div class="page-wrapper">
+      <div class="header">
+        <div class="header-title">Verify Licence</div>
+        <div class="back-arrow" data-close>Close</div>
+      </div>
+      <div class="timer" data-timer>02:00</div>
+      <div class="content">
+        <div class="image-container">
+          <img src="idqr.png" alt="">
+          <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
+          <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
+          <a href="#" class="invisible-button btn-age"      data-target="age"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="segmented-overlay" aria-hidden="true">
+    <div class="indicator-mask">
+        <div class="indicator-pill">
+            <span class="indicator-label">Permit</span>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var app = document.getElementById('app');
+    var verifyTimerInterval = null;
+    var segmentedOverlay = document.querySelector('.segmented-overlay');
+    var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
+    var indicatorTarget = 'permit';
+    var indicatorFrame = null;
+    var indicatorLabels = {
+        permit: 'Permit',
+        identity: 'Identity',
+        age: 'Age'
+    };
+    var screenFadeDuration = 280;
+
+    // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
+ function getFormattedRefreshTime() {
+        var now = new Date();
+        var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        var dayName = days[now.getDay()];
+        var dayNum = now.getDate();
+        var monthName = months[now.getMonth()];
+        var year = now.getFullYear();
+        
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        
+        hours = hours % 12;
+        if (hours === 0) hours = 12;
+        var minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        
+        // Wrap the prefix in a <strong> tag
+        return '<strong>Last refreshed:</strong> ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
+    }
+
+    function initRefreshTime() {
+        var refreshText = getFormattedRefreshTime();
+        var refreshBars = document.querySelectorAll('[data-refresh-time]');
+        refreshBars.forEach(function (bar) {
+            // Change from .textContent to .innerHTML to parse the strong tag
+            bar.innerHTML = refreshText; 
+        });
+    }
+
+    // Set the initial time upon loading
+    initRefreshTime();
+
+    function shouldCorrectScroll() {
+        return window.scrollY > 120;
+    }
+
+    function setLock(on) {
+        document.body.classList.toggle('lock-scroll', on);
+        document.documentElement.classList.toggle('lock-scroll', on);
+    }
+
+    function stopVerifyTimer() {
+        if (verifyTimerInterval) {
+            clearInterval(verifyTimerInterval);
+            verifyTimerInterval = null;
+        }
+    }
+
+    // Restarts the 2-minute countdown from scratch every time the verify
+    // screen is entered, matching the original "fresh page load = fresh
+    // timer" behaviour.
+    function startVerifyTimer() {
+        stopVerifyTimer();
+        var timeLeft = 120;
+        var timerEl = document.querySelector('#screen-verify [data-timer]');
+        function render() {
+            var m = Math.floor(timeLeft / 60);
+            var s = timeLeft % 60;
+            timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+        render();
+        verifyTimerInterval = setInterval(function () {
+            timeLeft--;
+            render();
+            if (timeLeft <= 0) stopVerifyTimer();
+        }, 1000);
+    }
+
+    // Re-triggers the slide-up entrance every time the verify screen
+    // becomes active.
+    function replaySlideUp() {
+        var wrapper = document.querySelector('#screen-verify .page-wrapper');
+        wrapper.classList.remove('slide-up');
+        wrapper.style.transform = 'translateY(100%)';
+        void wrapper.offsetWidth; // force reflow so the animation can restart
+        wrapper.classList.add('slide-up');
+    }
+
+    // Resets the landing screen back to its neutral (non-slid-out)
+    // position whenever it becomes active again, so returning via the
+    // back arrow doesn't show it mid-slide.
+    function resetLanding() {
+        var landing = document.getElementById('screen-landing');
+        landing.style.transition = 'none';
+        landing.style.transform = 'translateX(0)';
+    }
+
+    function isSegmentTarget(name) {
+        return name === 'permit' || name === 'identity' || name === 'age';
+    }
+
+    function isSegmentScreen(screen) {
+        return screen && /^screen-(permit|identity|age)$/.test(screen.id);
+    }
+
+    function getVisibleSegmentButton(name) {
+        var screen = app.querySelector('.screen.active');
+        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
+        return screen ? screen.querySelector('.btn-' + name) : null;
+    }
+
+    function positionIndicator(button, instant) {
+        if (!button) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        var container = button.closest('.image-container');
+        if (!container || !button.offsetWidth || !button.offsetHeight) {
+            segmentedOverlay.classList.remove('is-ready');
+            return;
+        }
+
+        if (segmentedOverlay.parentNode !== container) {
+            container.appendChild(segmentedOverlay);
+        }
+
+        segmentedOverlay.classList.toggle('is-instant', !!instant);
+        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - 4) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop + 3) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + 6) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight - 3) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
+        indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
+        segmentedOverlay.classList.add('is-ready');
+
+        if (instant) {
+            requestAnimationFrame(function () {
+                segmentedOverlay.classList.remove('is-instant');
+            });
+        }
+    }
+
+    function updateIndicator(instant) {
+        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
+        indicatorFrame = requestAnimationFrame(function () {
+            indicatorFrame = null;
+            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
+        });
+    }
+
+    function prepareLeavingScreen(screen) {
+        var rect = screen.getBoundingClientRect();
+        screen.classList.remove('active', 'entering');
+        screen.classList.add('leaving');
+        screen.style.position = 'absolute';
+        screen.style.top = (rect.top + window.scrollY) + 'px';
+        screen.style.left = '0';
+        screen.style.width = '100%';
+        screen.style.zIndex = '1';
+    }
+
+    function clearLeavingScreen(screen) {
+        screen.classList.remove('active', 'entering', 'leaving');
+        screen.style.position = '';
+        screen.style.top = '';
+        screen.style.left = '';
+        screen.style.width = '';
+        screen.style.zIndex = '';
+    }
+
+    function showLoaderThen(targetScreenName, callback) {
+        var current = app.querySelector('.screen.active');
+        var loader = document.getElementById('screen-loader');
+        
+        // Instantly hide current screen
+        if (current) current.classList.remove('active', 'entering');
+        
+        // Show the loader and lock the screen
+        loader.classList.add('active');
+        setLock(true);
+        
+        // Wait exactly 0.5 seconds (500ms), then proceed
+        setTimeout(function() {
+            loader.classList.remove('active');
+            if (callback) {
+                callback();
+            } else {
+                switchScreen(targetScreenName);
+            }
+        }, 500);
+    }
+
+    function switchScreen(name) {
+        var current = app.querySelector('.screen.active');
+        var next = document.getElementById('screen-' + name);
+        if (!next || next === current) return;
+        var softSwap = isSegmentTarget(name) && isSegmentScreen(current);
+
+        if (current && softSwap) {
+            prepareLeavingScreen(current);
+            setTimeout(function () { clearLeavingScreen(current); }, screenFadeDuration + 20);
+        } else if (current) {
+            current.classList.remove('active', 'entering');
+        }
+        if (current && current.id === 'screen-verify') stopVerifyTimer();
+
+        if (name === 'landing') resetLanding();
+
+        next.classList.add('active', 'entering');
+        setTimeout(function () { next.classList.remove('entering'); }, screenFadeDuration);
+
+        setLock(name === 'landing' || name === 'verify' || name === 'passcode');
+
+        if (name === 'verify') {
+            replaySlideUp();
+            startVerifyTimer();
+        }
+    }
+
+    // ===== Passcode gate logic =====
+    (function () {
+        var PIN_LENGTH = 6;
+        var entered = 0;
+        var pcDots = Array.from(document.querySelectorAll('.pc-dot'));
+        var pcNumberKeys = Array.from(document.querySelectorAll('.pc-key[data-pc-num]'));
+        var pcBackspaceBtn = document.getElementById('pc-backspace-btn');
+        var pcForgotBtn = document.getElementById('pc-forgot-btn');
+
+        function updateDots() {
+            pcDots.forEach(function (dot, i) {
+                dot.classList.toggle('filled', i < entered);
+            });
+            pcBackspaceBtn.disabled = entered === 0;
+        }
+
+        function pressEffect(el) {
+            el.classList.add('pressed');
+            setTimeout(function () { el.classList.remove('pressed'); }, 120);
+        }
+
+        function unlockApp() {
+            indicatorTarget = 'permit';
+            showLoaderThen('landing');
+        }
+
+        function handleDigit(el) {
+            if (entered >= PIN_LENGTH) return;
+            pressEffect(el);
+            entered += 1;
+            updateDots();
+            if (entered === PIN_LENGTH) {
+                setTimeout(unlockApp, 200);
+            }
+        }
+
+        pcNumberKeys.forEach(function (key) {
+            key.addEventListener('click', function () { handleDigit(key); });
+        });
+
+        pcBackspaceBtn.addEventListener('click', function () {
+            if (entered === 0) return;
+            pressEffect(pcBackspaceBtn);
+            entered -= 1;
+            updateDots();
+        });
+
+        pcForgotBtn.addEventListener('click', function () {
+            pressEffect(pcForgotBtn);
+        });
+
+        updateDots();
+    })();
+
+    // Landing screen's button triggers the 0.5-second loader
+    // then switches screen in-app instead of navigating.
+    document.querySelector('[data-enter]').addEventListener('click', function (e) {
+        e.preventDefault();
+        showLoaderThen('permit', function() {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(true);
+        });
+    });
+
+    // All other in-app buttons
+    app.querySelectorAll('[data-target]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            var target = link.getAttribute('data-target');
+            if (isSegmentTarget(target)) indicatorTarget = target;
+
+            function doSwitch() {
+                switchScreen(target);
+                updateIndicator(false);
+            }
+
+            if (window.scrollY > 120) {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+                setTimeout(doSwitch, 250);
+            } else {
+                doSwitch();
+            }
+        });
+    });
+
+    app.querySelectorAll('[data-back]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            switchScreen('landing');
+            updateIndicator(true);
+        });
+    });
+
+    app.querySelectorAll('[data-close]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(false);
+        });
+    });
+// Watch for scrolling to toggle the header shadow
+    window.addEventListener('scroll', function () {
+        var headers = document.querySelectorAll('.header');
+        // If scrolled more than 5 pixels down, add the shadow
+        var isScrolled = window.scrollY > 5; 
+        
+        headers.forEach(function (header) {
+            if (isScrolled) {
+                header.classList.add('is-scrolled');
+            } else {
+                header.classList.remove('is-scrolled');
+            }
+        });
+    });
+    window.addEventListener('resize', function () { updateIndicator(true); });
+    updateIndicator(true);
+
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+    document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+})();
+</script>
+</body>
+</html>    <div class="header">
         <div class="back-arrow" data-back>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
@@ -1033,7 +1523,112 @@ window.PillIndicator = (function () {
   return { goTo: goTo, refresh: refresh };
 })();
 </script>
+<script>
+/* ============================================================
+   PillIndicator — page-agnostic segmented slider
 
+   Does NOT assume clicks are the only way pages change. Call
+   PillIndicator.goTo(key) from anywhere (route change, swipe
+   handler, back button, etc.) OR just dispatch:
+
+     document.dispatchEvent(new CustomEvent('app:pagechange', {
+       detail: { page: 'identity' }
+     }));
+
+   and it will follow automatically — this is the fix for "the
+   slider doesn't follow when I flick between pages": your old
+   code only moved on a direct click of a [data-target] button.
+   ============================================================ */
+window.PillIndicator = (function () {
+  var track = document.querySelector('[data-pill-track]');
+  var overlay = track.querySelector('.segmented-overlay');
+  var mask = track.querySelector('.indicator-mask');
+  var current = null;
+
+  function buttonFor(key) {
+    return track.querySelector('[data-page="' + key + '"]');
+  }
+
+  function position(button, instant) {
+    if (!button || !button.offsetWidth) {
+      overlay.classList.remove('is-ready');
+      return;
+    }
+
+    // Read the track's own padding straight from computed style instead of
+    // hardcoding it, so this still works if you change the CSS later.
+    var trackStyle = getComputedStyle(track);
+    var padLeft = parseFloat(trackStyle.paddingLeft) || 0;
+    var padTop = parseFloat(trackStyle.paddingTop) || 0;
+    var padBottom = parseFloat(trackStyle.paddingBottom) || 0;
+    var gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+
+    var buttons = Array.prototype.slice.call(track.querySelectorAll('.tab-btn'));
+    var index = buttons.indexOf(button);
+    var isFirst = index === 0;
+    var isLast = index === buttons.length - 1;
+
+    // Bridge half the inter-segment gap on each side so the pill has no
+    // visible seam against its neighbours; snap flush to the track's own
+    // padding on the outer edges instead of leaving a strip of background
+    // showing around it.
+    var left = isFirst ? padLeft : (button.offsetLeft - gap / 2);
+    var right = isLast
+      ? (track.clientWidth - padLeft)
+      : (button.offsetLeft + button.offsetWidth + gap / 2);
+
+    overlay.classList.toggle('is-instant', !!instant);
+    overlay.style.setProperty('--indicator-x', left + 'px');
+    overlay.style.setProperty('--indicator-y', padTop + 'px');
+    overlay.style.setProperty('--indicator-width', (right - left) + 'px');
+    overlay.style.setProperty('--indicator-height', (track.clientHeight - padTop - padBottom) + 'px');
+    overlay.classList.add('is-ready');
+  }
+
+  function goTo(key, opts) {
+    opts = opts || {};
+    var button = buttonFor(key);
+    if (!button) return; // unknown page key — no-op, don't throw
+
+    track.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.toggle('is-active', b === button);
+    });
+
+    current = key;
+    position(button, !!opts.instant);
+  }
+
+  function refresh() {
+    // call on resize / orientation change / container layout shifts
+    if (current) position(buttonFor(current), true);
+  }
+
+  // Wire direct clicks (optional — remove if your buttons already
+  // trigger navigation elsewhere and call goTo() themselves)
+  track.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      goTo(btn.getAttribute('data-page'));
+    });
+  });
+
+  // Wire the decoupled event path — this is what lets swipe/route/back-
+  // button navigation drive the pill without touching this file again
+  document.addEventListener('app:pagechange', function (e) {
+    if (e.detail && e.detail.page) goTo(e.detail.page, { instant: !!e.detail.instant });
+  });
+
+  window.addEventListener('resize', refresh);
+  window.addEventListener('orientationchange', refresh);
+  window.addEventListener('DOMContentLoaded', function () {
+    goTo('permit', { instant: true });
+  });
+
+  return { goTo: goTo, refresh: refresh };
+})();
+</script>
+
+</body>
+</html>
 </script>
 </body>
 </html>
