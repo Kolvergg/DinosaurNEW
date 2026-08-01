@@ -773,8 +773,7 @@ body.lock-scroll, html.lock-scroll {
         if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
         return screen ? screen.querySelector('.btn-' + name) : null;
     }
-
-    function positionIndicator(button, instant) {
+function positionIndicator(button, instant) {
         if (!button) {
             segmentedOverlay.classList.remove('is-ready');
             return;
@@ -790,11 +789,35 @@ body.lock-scroll, html.lock-scroll {
             container.appendChild(segmentedOverlay);
         }
 
-       segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - 10) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop - 4) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + 20) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight + 8) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight - 3) + 'px');
+        // Same "bridge the gap between segments, fill the full zone" logic
+        // as the reference file — adapted to your layout, which measures
+        // the gap from actual button positions instead of reading CSS
+        // padding/gap off a shared track element (you don't have one).
+        var EDGE_INSET = 6;      // how far the pill extends past the first/last button toward the container edge
+        var VERTICAL_EXPAND = 4; // how far the pill extends past the button's own top/bottom
+
+        var segmentButtons = Array.prototype.slice
+            .call(container.querySelectorAll('.invisible-button[data-target]'))
+            .filter(function (b) { return isSegmentTarget(b.getAttribute('data-target')); })
+            .sort(function (a, b) { return a.offsetLeft - b.offsetLeft; });
+
+        var index = segmentButtons.indexOf(button);
+        var prev = segmentButtons[index - 1];
+        var next = segmentButtons[index + 1];
+
+        var left = prev
+            ? button.offsetLeft - (button.offsetLeft - (prev.offsetLeft + prev.offsetWidth)) / 2
+            : button.offsetLeft - EDGE_INSET;
+
+        var right = next
+            ? button.offsetLeft + button.offsetWidth + (next.offsetLeft - (button.offsetLeft + button.offsetWidth)) / 2
+            : button.offsetLeft + button.offsetWidth + EDGE_INSET;
+
+        segmentedOverlay.classList.toggle('is-instant', !!instant);
+        segmentedOverlay.style.setProperty('--indicator-x', left + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop - VERTICAL_EXPAND) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', (right - left) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight + VERTICAL_EXPAND * 2) + 'px');
         segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
         indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
         segmentedOverlay.classList.add('is-ready');
