@@ -6,23 +6,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<!-- Custom Home Screen icon — see note in chat about image requirements
-     and the need to re-add to Home Screen once this is uploaded. -->
 <link rel="apple-touch-icon" href="vicroads.png">
 <title>View details</title>
 <style>
 
     @font-face {
-    font-family: "SatoshiBold";
-    src: url("./Satoshi-Bold.otf") format("opentype");
+        font-family: "SatoshiBold";
+        src: url("./Satoshi-Bold.otf") format("opentype");
+    }
+    @font-face {
+        font-family: "LeagueSpartan";
+        src: url("./LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+    }
 
-         @font-face {
-    font-family: "LeagueSpartan";
-    src: url("./LeagueSpartan-VariableFont_wght.ttf") format("truetype");
-    font-weight: 100 900;
-    font-style: normal;
-}
-}
 /* ===== Shared reset ===== */
 * {
     margin: 0;
@@ -39,9 +37,9 @@ html, body {
 }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f4f5f7;
 }
 
-/* ===== Refresh Timestamp Bar ===== */
 /* ===== Refresh Timestamp Bar ===== */
 .refresh-bar {
     background-color: #ffffff;
@@ -53,7 +51,6 @@ body {
     border-bottom: 1px solid #e2e8f0;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
-
 .refresh-bar strong {
     font-weight: 600;
 }
@@ -62,14 +59,12 @@ body {
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* Fixed white bar painted over the notch/Dynamic Island area. Sits above
-   everything but is NOT part of page flow, so it can't shift any existing
-   header height or button position. */
+/* Fixed white bar painted over the notch/Dynamic Island area */
 .status-bar-fill {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: env(safe-area-inset-top);
-    background: #FFFFFF; /* TEMP diagnostic color — will be set back to white */
+    background: #FFFFFF;
     z-index: 9999;
     pointer-events: none;
 }
@@ -121,8 +116,7 @@ body.lock-scroll, html.lock-scroll {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    /* Updated to a darker, richer green (#15803D) */
-   background: conic-gradient(from 180deg, rgba(118, 198, 101, 0) 0%, rgba(118, 198, 101, 1) 100%);
+    background: conic-gradient(from 180deg, rgba(118, 198, 101, 0) 0%, rgba(118, 198, 101, 1) 100%);
     -webkit-mask: radial-gradient(farthest-side, transparent 17px, #000 18px);
     mask: radial-gradient(farthest-side, transparent 17px, #000 18px);
     animation: spin 0.75s linear infinite;
@@ -132,7 +126,7 @@ body.lock-scroll, html.lock-scroll {
     100% { transform: rotate(360deg); }
 }
 
-/* ===== #screen-passcode (new front gate) ===== */
+/* ===== #screen-passcode ===== */
 #screen-passcode {
     background: #ffffff;
     min-height: 100vh;
@@ -160,14 +154,14 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-passcode .pc-title {
     font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 21px; /* Reduced so long titles fit on narrow mobile screens */
+    font-size: 21px;
     font-weight: 800;
     color: #111;
     text-align: center;
     margin: 0 0 32px;
     line-height: 1.25;
     flex-shrink: 0;
-    white-space: nowrap; /* Forces text to stay on 1 single line */
+    white-space: nowrap;
 }
 #screen-passcode .pc-dots {
     display: flex;
@@ -201,8 +195,8 @@ body.lock-scroll, html.lock-scroll {
     background: none;
     border: none;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 22px; /* Smaller digit size (down from 30px) */
-    font-weight: 400; /* Thinner weight (down from 700) */
+    font-size: 22px;
+    font-weight: 400;
     color: #111;
     padding: 10px 0;
     cursor: pointer;
@@ -212,7 +206,6 @@ body.lock-scroll, html.lock-scroll {
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     outline: none;
-
 }
 #screen-passcode .pc-key:active,
 #screen-passcode .pc-key.pressed {
@@ -236,7 +229,7 @@ body.lock-scroll, html.lock-scroll {
     cursor: default;
 }
 
-/* ===== #screen-landing (was index.html) ===== */
+/* ===== #screen-landing ===== */
 #screen-landing .image-container {
     width: 100%;
     height: 100%;
@@ -265,67 +258,8 @@ body.lock-scroll, html.lock-scroll {
     text-decoration: none;
 }
 
-/* ===== #screen-permit (was main1.html) ===== */
-#screen-permit .header {
-    position: sticky;
-    top: 0; left: 0; right: 0;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 18px 0;
-    box-shadow: none; /* Removed the shadow */
-    transition: box-shadow 0.2s ease; /* Added smooth fade */
-}
-#screen-permit .back-arrow {
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #283442;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-}
-#screen-permit .back-arrow svg { width: 24px; height: 24px; }
-#screen-permit .header-title {
-     font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: #283442;
-    text-align: center;
-}
-#screen-permit .content {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-}
-#screen-permit .image-container { width: 100%; position: relative; display: block; }
-#screen-permit .image-container img { width: 100%; height: auto; display: block; }
-#screen-permit .invisible-button {
-    position: absolute;
-    cursor: pointer;
-    z-index: 50;
-    text-decoration: none;
-    border-radius: 50px;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-    outline: none;
-    background: transparent;
-}
-#screen-permit .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
-#screen-permit .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
-#screen-permit .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
-#screen-permit .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
-
-/* ===== #screen-identity / #screen-age (was page2.html / page3.html) ===== */
-#screen-identity .header, #screen-age .header {
+/* ===== Screen Headers (Permit, Identity, Age) ===== */
+#screen-permit .header, #screen-identity .header, #screen-age .header {
     position: sticky;
     top: 0; left: 0; right: 0;
     background-color: white;
@@ -334,14 +268,13 @@ body.lock-scroll, html.lock-scroll {
     align-items: center;
     justify-content: center;
     z-index: 100;
-    box-shadow: none; /* Removed the shadow */
-    transition: box-shadow 0.2s ease; /* Added smooth fade */
+    box-shadow: none;
+    transition: box-shadow 0.2s ease;
 }
-   .header.is-scrolled {
+.header.is-scrolled {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-
 }
-#screen-identity .back-arrow, #screen-age .back-arrow {
+#screen-permit .back-arrow, #screen-identity .back-arrow, #screen-age .back-arrow {
     position: absolute;
     left: 20px;
     color: #283442;
@@ -352,35 +285,52 @@ body.lock-scroll, html.lock-scroll {
     width: 32px;
     height: 32px;
 }
-#screen-identity .back-arrow svg, #screen-age .back-arrow svg { width: 24px; height: 24px; }
-#screen-identity .header-title, #screen-age .header-title {
-    color: #283442;
-  font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
+#screen-permit .back-arrow svg, #screen-identity .back-arrow svg, #screen-age .back-arrow svg { width: 24px; height: 24px; }
+#screen-permit .header-title, #screen-identity .header-title, #screen-age .header-title {
+    font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 18px;
     font-weight: 500;
+    color: #283442;
 }
-#screen-identity .content, #screen-age .content { display: flex; flex-direction: column; }
-#screen-identity .image-container, #screen-age .image-container { width: 100%; display: block; position: relative; }
-#screen-identity .image-container img, #screen-age .image-container img { width: 100%; height: auto; display: block; }
-#screen-identity .invisible-button, #screen-age .invisible-button {
+#screen-permit .content, #screen-identity .content, #screen-age .content {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+#screen-permit .image-container, #screen-identity .image-container, #screen-age .image-container {
+    width: 100%;
+    position: relative;
+    display: block;
+}
+#screen-permit .image-container img, #screen-identity .image-container img, #screen-age .image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Invisible buttons for segment screens */
+.invisible-button {
     position: absolute;
     cursor: pointer;
     z-index: 50;
     text-decoration: none;
-    border-radius: 50px;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-    outline: none;
-    background: transparent;
 }
-#screen-identity .btn-permit,   #screen-age .btn-permit   { left: 6.4%; top: 48%; width: 28%; height: 4.6%; }
-#screen-identity .btn-identity, #screen-age .btn-identity { left: 36%;  top: 48%; width: 28%; height: 4.6%; }
-#screen-identity .btn-age,      #screen-age .btn-age      { left: 66%;  top: 48%; width: 28%; height: 4.6%; }
-#screen-identity .btn-new,      #screen-age .btn-new      { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
+/* The "New" button connecting to Verify */
+#screen-permit .btn-new, #screen-identity .btn-new, #screen-age .btn-new { left: 58.5%; top: 33.5%; width: 30%; height: 4.5%; }
 
-/* ===== #screen-verify (was page4.html) ===== */
+/* The geometric boundary where the new global tab track will anchor */
+.tab-anchor {
+    position: absolute;
+    left: 6.4%;
+    top: 47.8%;
+    width: 87.6%;
+    height: 4.8%;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* ===== #screen-verify ===== */
 #screen-verify .page-wrapper {
     width: 100%;
     height: 100%;
@@ -403,7 +353,7 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-verify .header-title { font-size: 18px; font-weight: 500; color: #3a3a3a; }
 #screen-verify .back-arrow {
-       font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "LeagueSpartan", -apple-system, BlinkMacSystemFont, sans-serif;
     position: absolute;
     right: 20px;
     cursor: pointer;
@@ -431,60 +381,85 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-verify .image-container { width: 100vw; position: relative; }
 #screen-verify .image-container img { width: 100vw; height: auto; display: block; }
-#screen-verify .invisible-button { position: absolute; cursor: pointer; text-decoration: none; z-index: 50; }
+/* Verify keeps its old invisible buttons because the global track is hidden here */
 #screen-verify .btn-permit   { left: 7%;    top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-identity { left: 37%;   top: 48%; width: 26%;   height: 4.5%; }
 #screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
 
-/* ===== Floating segmented-control overlay ===== */
+/* ============================================================
+   GLOBAL PILL TRACK (Replaces the old invisible overlay)
+   ============================================================ */
+#global-tab-container {
+    position: absolute;
+    z-index: 90; /* Floats above the screen transitions */
+    display: none;
+}
+#global-tab-container.is-visible {
+    display: block;
+}
+
+.pill-track {
+    position: relative;
+    display: flex; /* Stretches tabs cleanly across the track */
+    width: 100%;
+    height: 100%;
+    gap: 4px;
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid #e6e8eb;
+    border-radius: 999px;
+    box-sizing: border-box;
+}
+
+.tab-btn {
+    flex: 1; /* Tabs divide the space equally */
+    position: relative;
+    z-index: 2;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 999px;
+    font-family: 'SatoshiBold', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #5b6472;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: color 200ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.tab-btn.is-active { color: #ffffff; }
+
 .segmented-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    z-index: 60;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
     opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms ease;
+    z-index: 1;
 }
-.segmented-overlay.is-ready { opacity: 1; }
+.segmented-overlay.is-ready { opacity: 1; visibility: visible; }
+.segmented-overlay.is-instant .indicator-mask { transition: none !important; }
+
 .indicator-mask {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: var(--indicator-width, 0px);
     height: var(--indicator-height, 0px);
     border-radius: 999px;
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
     transition:
-        transform 330ms cubic-bezier(.2,.8,.2,1),
-        width 330ms cubic-bezier(.2,.8,.2,1),
-        height 330ms cubic-bezier(.2,.8,.2,1);
+        transform 520ms cubic-bezier(.22, 1, .36, 1),
+        width 520ms cubic-bezier(.22, 1, .36, 1),
+        height 520ms cubic-bezier(.22, 1, .36, 1);
     will-change: transform, width, height;
-}
-.indicator-pill {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: inherit;
-    background: #253544;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
-    overflow: hidden;
-}
-.indicator-label {
-     font-family: 'SatoshiBold', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #fff;
-    font-size: var(--indicator-font-size, 14px);
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-    text-align: center;
-}
-.segmented-overlay.is-instant .indicator-mask {
-    transition: none;
 }
 </style>
 </head>
@@ -494,27 +469,21 @@ body.lock-scroll, html.lock-scroll {
 
 <div id="app">
 
-  <!-- ===== screen-loader ===== -->
   <div class="screen" id="screen-loader">
     <div class="loader-spinner"></div>
   </div>
 
-  <!-- ===== screen-passcode (new front gate, shown first) ===== -->
   <div class="screen active" id="screen-passcode">
     <div class="pc-wrap">
       <div class="pc-lock-wrap">
         <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
-          <!-- Shortened shackle with exact color #42b12a -->
-       <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>-linecap="round"/>
-          <!-- Body made nearly square (rx="1.5") -->
+          <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>
           <rect x="18" y="40" width="64" height="46" rx="1.5" fill="#42b12a"/>
           <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
           <path d="M46 65 L42 78 H58 L54 65 Z" fill="#1E2A38"/>
         </svg>
       </div>
-
       <p class="pc-title">Please enter your existing PIN code</p>
-
       <div class="pc-dots" id="pc-dots">
         <span class="pc-dot" data-index="0"></span>
         <span class="pc-dot" data-index="1"></span>
@@ -523,7 +492,6 @@ body.lock-scroll, html.lock-scroll {
         <span class="pc-dot" data-index="4"></span>
         <span class="pc-dot" data-index="5"></span>
       </div>
-
       <div class="pc-keypad-area">
         <div class="pc-keypad">
           <button class="pc-key" data-pc-num="1">1</button>
@@ -549,7 +517,6 @@ body.lock-scroll, html.lock-scroll {
     </div>
   </div>
 
-  <!-- ===== screen-landing (was index.html) ===== -->
   <div class="screen" id="screen-landing">
     <div class="image-container">
         <img src="idjameshp.png" alt="">
@@ -557,7 +524,6 @@ body.lock-scroll, html.lock-scroll {
     </div>
   </div>
 
-  <!-- ===== screen-permit (was main1.html) ===== -->
   <div class="screen" id="screen-permit">
     <div class="header">
         <div class="back-arrow" data-back>
@@ -571,10 +537,8 @@ body.lock-scroll, html.lock-scroll {
     <div class="content">
         <div class="image-container">
             <img src="identity1.jpg" alt="">
-            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
-            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
-            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
-            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+            <div class="tab-anchor"></div>
+            <a href="#" class="invisible-button btn-new" data-target="verify"></a>
         </div>
         <div class="image-container">
             <img src="idlucaa.png" alt="">
@@ -582,7 +546,6 @@ body.lock-scroll, html.lock-scroll {
     </div>
   </div>
 
-  <!-- ===== screen-identity (was page2.html) ===== -->
   <div class="screen" id="screen-identity">
     <div class="header">
         <div class="back-arrow" data-back>
@@ -596,15 +559,12 @@ body.lock-scroll, html.lock-scroll {
     <div class="content">
         <div class="image-container">
             <img src="identity2.jpg" alt="">
-            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
-            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
-            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
-            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+            <div class="tab-anchor"></div>
+            <a href="#" class="invisible-button btn-new" data-target="verify"></a>
         </div>
     </div>
   </div>
 
-  <!-- ===== screen-age (was page3.html) ===== -->
   <div class="screen" id="screen-age">
     <div class="header">
         <div class="back-arrow" data-back>
@@ -618,15 +578,12 @@ body.lock-scroll, html.lock-scroll {
     <div class="content">
         <div class="image-container">
             <img src="identity3.jpg" alt="">
-            <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
-            <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
-            <a href="#" class="invisible-button btn-age"      data-target="age"></a>
-            <a href="#" class="invisible-button btn-new"      data-target="verify"></a>
+            <div class="tab-anchor"></div>
+            <a href="#" class="invisible-button btn-new" data-target="verify"></a>
         </div>
     </div>
   </div>
 
-  <!-- ===== screen-verify (was page4.html) ===== -->
   <div class="screen" id="screen-verify">
     <div class="page-wrapper">
       <div class="header">
@@ -645,33 +602,28 @@ body.lock-scroll, html.lock-scroll {
     </div>
   </div>
 
-</div>
-
-<div class="segmented-overlay" aria-hidden="true">
-    <div class="indicator-mask">
-        <div class="indicator-pill">
-            <span class="indicator-label">Permit</span>
-        </div>
+  <div id="global-tab-container">
+    <div class="pill-track" id="pillTrack" data-pill-track>
+      <button class="tab-btn is-active" data-page="permit" data-target="permit">Permit</button>
+      <button class="tab-btn" data-page="identity" data-target="identity">Identity</button>
+      <button class="tab-btn" data-page="age" data-target="age">Age</button>
+      <div class="segmented-overlay" id="segmentedOverlay" aria-hidden="true">
+        <div class="indicator-mask"></div>
+      </div>
     </div>
+  </div>
+
 </div>
 
 <script>
 (function () {
     var app = document.getElementById('app');
     var verifyTimerInterval = null;
-    var segmentedOverlay = document.querySelector('.segmented-overlay');
-    var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
     var indicatorTarget = 'permit';
-    var indicatorFrame = null;
-    var indicatorLabels = {
-        permit: 'Permit',
-        identity: 'Identity',
-        age: 'Age'
-    };
     var screenFadeDuration = 280;
 
-    // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
- function getFormattedRefreshTime() {
+    // Refresh Time Logic
+    function getFormattedRefreshTime() {
         var now = new Date();
         var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -689,45 +641,34 @@ body.lock-scroll, html.lock-scroll {
         if (hours === 0) hours = 12;
         var minutesStr = minutes < 10 ? '0' + minutes : minutes;
         
-        // Wrap the prefix in a <strong> tag
         return '<strong>Last refreshed:</strong> ' + dayName + ' ' + dayNum + ' ' + monthName + ' ' + year + ' ' + hours + ':' + minutesStr + ampm;
     }
 
     function initRefreshTime() {
         var refreshText = getFormattedRefreshTime();
-        var refreshBars = document.querySelectorAll('[data-refresh-time]');
-        refreshBars.forEach(function (bar) {
-            // Change from .textContent to .innerHTML to parse the strong tag
+        app.querySelectorAll('[data-refresh-time]').forEach(function (bar) {
             bar.innerHTML = refreshText; 
         });
     }
-
-    // Set the initial time upon loading
     initRefreshTime();
 
-    function shouldCorrectScroll() {
-        return window.scrollY > 120;
-    }
-
+    // Scroll Lock
     function setLock(on) {
         document.body.classList.toggle('lock-scroll', on);
         document.documentElement.classList.toggle('lock-scroll', on);
     }
 
+    // Verify Timer
     function stopVerifyTimer() {
         if (verifyTimerInterval) {
             clearInterval(verifyTimerInterval);
             verifyTimerInterval = null;
         }
     }
-
-    // Restarts the 2-minute countdown from scratch every time the verify
-    // screen is entered, matching the original "fresh page load = fresh
-    // timer" behaviour.
     function startVerifyTimer() {
         stopVerifyTimer();
         var timeLeft = 120;
-        var timerEl = document.querySelector('#screen-verify [data-timer]');
+        var timerEl = app.querySelector('#screen-verify [data-timer]');
         function render() {
             var m = Math.floor(timeLeft / 60);
             var s = timeLeft % 60;
@@ -741,79 +682,19 @@ body.lock-scroll, html.lock-scroll {
         }, 1000);
     }
 
-    // Re-triggers the slide-up entrance every time the verify screen
-    // becomes active.
+    // Screen State Modifiers
     function replaySlideUp() {
-        var wrapper = document.querySelector('#screen-verify .page-wrapper');
+        var wrapper = app.querySelector('#screen-verify .page-wrapper');
         wrapper.classList.remove('slide-up');
         wrapper.style.transform = 'translateY(100%)';
-        void wrapper.offsetWidth; // force reflow so the animation can restart
+        void wrapper.offsetWidth;
         wrapper.classList.add('slide-up');
     }
-
-    // Resets the landing screen back to its neutral (non-slid-out)
-    // position whenever it becomes active again, so returning via the
-    // back arrow doesn't show it mid-slide.
     function resetLanding() {
         var landing = document.getElementById('screen-landing');
         landing.style.transition = 'none';
         landing.style.transform = 'translateX(0)';
     }
-
-    function isSegmentTarget(name) {
-        return name === 'permit' || name === 'identity' || name === 'age';
-    }
-
-    function isSegmentScreen(screen) {
-        return screen && /^screen-(permit|identity|age)$/.test(screen.id);
-    }
-
-    function getVisibleSegmentButton(name) {
-        var screen = app.querySelector('.screen.active');
-        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
-        return screen ? screen.querySelector('.btn-' + name) : null;
-    }
-
-    function positionIndicator(button, instant) {
-        if (!button) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        var container = button.closest('.image-container');
-        if (!container || !button.offsetWidth || !button.offsetHeight) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        if (segmentedOverlay.parentNode !== container) {
-            container.appendChild(segmentedOverlay);
-        }
-
-        segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - 4) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop + 3) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + 6) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight - 3) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
-        indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
-        segmentedOverlay.classList.add('is-ready');
-
-        if (instant) {
-            requestAnimationFrame(function () {
-                segmentedOverlay.classList.remove('is-instant');
-            });
-        }
-    }
-
-    function updateIndicator(instant) {
-        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
-        indicatorFrame = requestAnimationFrame(function () {
-            indicatorFrame = null;
-            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
-        });
-    }
-
     function prepareLeavingScreen(screen) {
         var rect = screen.getBoundingClientRect();
         screen.classList.remove('active', 'entering');
@@ -824,7 +705,6 @@ body.lock-scroll, html.lock-scroll {
         screen.style.width = '100%';
         screen.style.zIndex = '1';
     }
-
     function clearLeavingScreen(screen) {
         screen.classList.remove('active', 'entering', 'leaving');
         screen.style.position = '';
@@ -834,18 +714,22 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
+    // Loader & Routing
+    function isSegmentTarget(name) {
+        return name === 'permit' || name === 'identity' || name === 'age';
+    }
+    function isSegmentScreen(screen) {
+        return screen && /^screen-(permit|identity|age)$/.test(screen.id);
+    }
+
     function showLoaderThen(targetScreenName, callback) {
         var current = app.querySelector('.screen.active');
         var loader = document.getElementById('screen-loader');
         
-        // Instantly hide current screen
         if (current) current.classList.remove('active', 'entering');
-        
-        // Show the loader and lock the screen
         loader.classList.add('active');
         setLock(true);
         
-        // Wait exactly 0.5 seconds (500ms), then proceed
         setTimeout(function() {
             loader.classList.remove('active');
             if (callback) {
@@ -881,9 +765,109 @@ body.lock-scroll, html.lock-scroll {
             replaySlideUp();
             startVerifyTimer();
         }
+
+        if (isSegmentTarget(name) && window.PillIndicator) {
+            indicatorTarget = name;
+            window.PillIndicator.goTo(name);
+        }
+
+        // Wait a frame so the DOM renders the new screen elements before measuring
+        requestAnimationFrame(function() {
+            syncTabs();
+        });
     }
 
-    // ===== Passcode gate logic =====
+    /* ============================================================
+       NEW: PillIndicator (adapted to seamlessly map to the DOM track)
+       ============================================================ */
+    window.PillIndicator = (function () {
+        var track = document.getElementById('pillTrack');
+        if (!track) return { goTo: function(){}, refresh: function(){} };
+        var overlay = track.querySelector('.segmented-overlay');
+        var current = null;
+
+        function buttonFor(key) {
+            return track.querySelector('[data-page="' + key + '"]');
+        }
+
+        function position(button, instant) {
+            if (!button || !button.offsetWidth) {
+                overlay.classList.remove('is-ready');
+                return;
+            }
+
+            var trackStyle = window.getComputedStyle(track);
+            var padLeft = parseFloat(trackStyle.paddingLeft) || 0;
+            var padTop = parseFloat(trackStyle.paddingTop) || 0;
+            var padBottom = parseFloat(trackStyle.paddingBottom) || 0;
+            var gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+
+            var buttons = Array.prototype.slice.call(track.querySelectorAll('.tab-btn'));
+            var index = buttons.indexOf(button);
+            var isFirst = index === 0;
+            var isLast = index === buttons.length - 1;
+
+            var left = isFirst ? padLeft : (button.offsetLeft - gap / 2);
+            var right = isLast
+                ? (track.clientWidth - padLeft)
+                : (button.offsetLeft + button.offsetWidth + gap / 2);
+
+            overlay.classList.toggle('is-instant', !!instant);
+            overlay.style.setProperty('--indicator-x', left + 'px');
+            overlay.style.setProperty('--indicator-y', padTop + 'px');
+            overlay.style.setProperty('--indicator-width', (right - left) + 'px');
+            overlay.style.setProperty('--indicator-height', (track.clientHeight - padTop - padBottom) + 'px');
+            overlay.classList.add('is-ready');
+        }
+
+        function goTo(key, opts) {
+            opts = opts || {};
+            var button = buttonFor(key);
+            if (!button) return;
+
+            track.querySelectorAll('.tab-btn').forEach(function (b) {
+                b.classList.toggle('is-active', b === button);
+            });
+
+            current = key;
+            position(button, !!opts.instant);
+        }
+
+        function refresh() {
+            if (current) position(buttonFor(current), true);
+        }
+
+        return { goTo: goTo, refresh: refresh };
+    })();
+
+    /* Maps the global UI Track directly over the baked-in image tabs */
+    function syncTabs() {
+        // Find whichever segment screen is showing or entering
+        var activeScreen = app.querySelector('.screen.active');
+        var container = document.getElementById('global-tab-container');
+        
+        if (isSegmentScreen(activeScreen)) {
+            var anchor = activeScreen.querySelector('.tab-anchor');
+            if (anchor) {
+                var rect = anchor.getBoundingClientRect();
+                container.style.left = (rect.left + window.scrollX) + 'px';
+                container.style.top = (rect.top + window.scrollY) + 'px';
+                container.style.width = rect.width + 'px';
+                container.style.height = rect.height + 'px';
+                container.classList.add('is-visible');
+                if (window.PillIndicator) window.PillIndicator.refresh();
+                return;
+            }
+        }
+        container.classList.remove('is-visible');
+    }
+
+    // Keep it perfectly pinned and proportional on layout changes
+    window.addEventListener('resize', syncTabs);
+    window.addEventListener('orientationchange', syncTabs);
+    window.addEventListener('load', syncTabs);
+
+    // ===== Passcode Gate =====
     (function () {
         var PIN_LENGTH = 6;
         var entered = 0;
@@ -898,17 +882,14 @@ body.lock-scroll, html.lock-scroll {
             });
             pcBackspaceBtn.disabled = entered === 0;
         }
-
         function pressEffect(el) {
             el.classList.add('pressed');
             setTimeout(function () { el.classList.remove('pressed'); }, 120);
         }
-
         function unlockApp() {
             indicatorTarget = 'permit';
             showLoaderThen('landing');
         }
-
         function handleDigit(el) {
             if (entered >= PIN_LENGTH) return;
             pressEffect(el);
@@ -922,51 +903,36 @@ body.lock-scroll, html.lock-scroll {
         pcNumberKeys.forEach(function (key) {
             key.addEventListener('click', function () { handleDigit(key); });
         });
-
         pcBackspaceBtn.addEventListener('click', function () {
             if (entered === 0) return;
             pressEffect(pcBackspaceBtn);
             entered -= 1;
             updateDots();
         });
-
-        pcForgotBtn.addEventListener('click', function () {
-            pressEffect(pcForgotBtn);
-        });
-
+        pcForgotBtn.addEventListener('click', function () { pressEffect(pcForgotBtn); });
         updateDots();
     })();
 
-    // Landing screen's button triggers the 0.5-second loader
-    // then switches screen in-app instead of navigating.
+    // ===== Event Listeners =====
     document.querySelector('[data-enter]').addEventListener('click', function (e) {
         e.preventDefault();
         showLoaderThen('permit', function() {
-            indicatorTarget = 'permit';
             switchScreen('permit');
-            updateIndicator(true);
         });
     });
 
-    // All other in-app buttons
     app.querySelectorAll('[data-target]').forEach(function (link) {
         link.addEventListener('click', function (e) {
             e.preventDefault();
 
             var target = link.getAttribute('data-target');
-            if (isSegmentTarget(target)) indicatorTarget = target;
-
+            
             function doSwitch() {
                 switchScreen(target);
-                updateIndicator(false);
             }
 
             if (window.scrollY > 120) {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 setTimeout(doSwitch, 250);
             } else {
                 doSwitch();
@@ -975,40 +941,32 @@ body.lock-scroll, html.lock-scroll {
     });
 
     app.querySelectorAll('[data-back]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            switchScreen('landing');
-            updateIndicator(true);
-        });
+        btn.addEventListener('click', function () { switchScreen('landing'); });
     });
 
     app.querySelectorAll('[data-close]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            indicatorTarget = 'permit';
-            switchScreen('permit');
-            updateIndicator(false);
-        });
+        btn.addEventListener('click', function () { switchScreen('permit'); });
     });
-// Watch for scrolling to toggle the header shadow
-    window.addEventListener('scroll', function () {
-        var headers = document.querySelectorAll('.header');
-        // If scrolled more than 5 pixels down, add the shadow
-        var isScrolled = window.scrollY > 5; 
-        
-        headers.forEach(function (header) {
-            if (isScrolled) {
-                header.classList.add('is-scrolled');
-            } else {
-                header.classList.remove('is-scrolled');
-            }
-        });
-    });
-    window.addEventListener('resize', function () { updateIndicator(true); });
-    updateIndicator(true);
 
+    // Shadow logic on header scroll
+    window.addEventListener('scroll', function () {
+        var isScrolled = window.scrollY > 5; 
+        document.querySelectorAll('.header').forEach(function (header) {
+            header.classList.toggle('is-scrolled', isScrolled);
+        });
+    });
+
+    // Disallow zooming/pinch-scale on iOS
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
     document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+
+    // Startup config
+    syncTabs();
+    if (window.PillIndicator) {
+        window.PillIndicator.goTo(indicatorTarget, { instant: true });
+    }
 })();
 </script>
 </body>
-</html>v
+</html>
