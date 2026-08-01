@@ -15,12 +15,13 @@
     @font-face {
     font-family: "SatoshiBold";
     src: url("./Satoshi-Bold.otf") format("opentype");
-}
-@font-face {
+
+         @font-face {
     font-family: "LeagueSpartan";
     src: url("./LeagueSpartan-VariableFont_wght.ttf") format("truetype");
     font-weight: 100 900;
     font-style: normal;
+}
 }
 /* ===== Shared reset ===== */
 * {
@@ -457,9 +458,9 @@ body.lock-scroll, html.lock-scroll {
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
     transition:
-        transform 520ms cubic-bezier(.22,1,.36,1),
-        width 520ms cubic-bezier(.22,1,.36,1),
-        height 520ms cubic-bezier(.22,1,.36,1);
+        transform 330ms cubic-bezier(.2,.8,.2,1),
+        width 330ms cubic-bezier(.2,.8,.2,1),
+        height 330ms cubic-bezier(.2,.8,.2,1);
     will-change: transform, width, height;
 }
 .indicator-pill {
@@ -487,6 +488,214 @@ body.lock-scroll, html.lock-scroll {
 }
 </style>
 </head>
+
+     <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pill Slider — exact reference</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f4f5f7; padding:60px 24px; }
+
+  /* ============================================================
+     SPEC (v2 — adjusted per feedback: wider pill that fully fills
+     the track's interior zone, slower/smoother settle)
+     - duration:        520ms
+     - easing:          cubic-bezier(.22, 1, .36, 1)   (smooth decelerate, no overshoot)
+     - pill sizing:     fills full track interior height (track height minus
+                         track padding), and bridges the gap between segments
+                         horizontally so there's no visible outer-pill strip
+                         around it — see position() in the script below
+     - pill color:      #253544
+     - label:           #ffffff, weight 600
+     - corner radius:   999px (full pill)
+     ============================================================ */
+
+  .pill-track {
+    position: relative;
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid #e6e8eb;
+    border-radius: 999px;
+  }
+
+  .tab-btn {
+    position: relative;
+    z-index: 2;
+    padding: 14px 44px;
+    min-width: 110px;
+    text-align: center;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #5b6472;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: color 200ms ease;
+  }
+  .tab-btn.is-active { color: #ffffff; }
+
+  .segmented-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms ease;
+    z-index: 1;
+  }
+  .segmented-overlay.is-ready { opacity: 1; visibility: visible; }
+  .segmented-overlay.is-instant .indicator-mask { transition: none !important; }
+
+  .indicator-mask {
+    position: absolute;
+    top: 0; left: 0;
+    width: var(--indicator-width, 0px);
+    height: var(--indicator-height, 0px);
+    border-radius: 999px;
+    background: #253544;
+    transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
+    transition:
+      transform 520ms cubic-bezier(.22, 1, .36, 1),
+      width 520ms cubic-bezier(.22, 1, .36, 1),
+      height 520ms cubic-bezier(.22, 1, .36, 1);
+    will-change: transform, width, height;
+  }
+
+  .demo-note { max-width: 520px; margin: 24px auto 0; font-size: 13px; color: #8a94a3; text-align:center; }
+</style>
+</head>
+<body>
+
+<div style="display:flex; justify-content:center;">
+  <div class="pill-track" id="pillTrack" data-pill-track>
+    <button class="tab-btn is-active" data-page="permit">Permit</button>
+    <button class="tab-btn" data-page="identity">Identity</button>
+    <button class="tab-btn" data-page="age">Age</button>
+
+    <div class="segmented-overlay" id="segmentedOverlay" aria-hidden="true">
+      <div class="indicator-mask"></div>
+    </div>
+  </div>
+</div>
+
+<p class="demo-note">
+  Click the tabs, or open the console and run <code>PillIndicator.goTo('age')</code> —
+  both drive the exact same animation. That's the part to wire into your
+  navigation/routing code.
+</p>
+
+<script>
+/* ============================================================
+   PillIndicator — page-agnostic segmented slider
+
+   Does NOT assume clicks are the only way pages change. Call
+   PillIndicator.goTo(key) from anywhere (route change, swipe
+   handler, back button, etc.) OR just dispatch:
+
+     document.dispatchEvent(new CustomEvent('app:pagechange', {
+       detail: { page: 'identity' }
+     }));
+
+   and it will follow automatically — this is the fix for "the
+   slider doesn't follow when I flick between pages": your old
+   code only moved on a direct click of a [data-target] button.
+   ============================================================ */
+window.PillIndicator = (function () {
+  var track = document.querySelector('[data-pill-track]');
+  var overlay = track.querySelector('.segmented-overlay');
+  var mask = track.querySelector('.indicator-mask');
+  var current = null;
+
+  function buttonFor(key) {
+    return track.querySelector('[data-page="' + key + '"]');
+  }
+
+  function position(button, instant) {
+    if (!button || !button.offsetWidth) {
+      overlay.classList.remove('is-ready');
+      return;
+    }
+
+    // Read the track's own padding straight from computed style instead of
+    // hardcoding it, so this still works if you change the CSS later.
+    var trackStyle = getComputedStyle(track);
+    var padLeft = parseFloat(trackStyle.paddingLeft) || 0;
+    var padTop = parseFloat(trackStyle.paddingTop) || 0;
+    var padBottom = parseFloat(trackStyle.paddingBottom) || 0;
+    var gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+
+    var buttons = Array.prototype.slice.call(track.querySelectorAll('.tab-btn'));
+    var index = buttons.indexOf(button);
+    var isFirst = index === 0;
+    var isLast = index === buttons.length - 1;
+
+    // Bridge half the inter-segment gap on each side so the pill has no
+    // visible seam against its neighbours; snap flush to the track's own
+    // padding on the outer edges instead of leaving a strip of background
+    // showing around it.
+    var left = isFirst ? padLeft : (button.offsetLeft - gap / 2);
+    var right = isLast
+      ? (track.clientWidth - padLeft)
+      : (button.offsetLeft + button.offsetWidth + gap / 2);
+
+    overlay.classList.toggle('is-instant', !!instant);
+    overlay.style.setProperty('--indicator-x', left + 'px');
+    overlay.style.setProperty('--indicator-y', padTop + 'px');
+    overlay.style.setProperty('--indicator-width', (right - left) + 'px');
+    overlay.style.setProperty('--indicator-height', (track.clientHeight - padTop - padBottom) + 'px');
+    overlay.classList.add('is-ready');
+  }
+
+  function goTo(key, opts) {
+    opts = opts || {};
+    var button = buttonFor(key);
+    if (!button) return; // unknown page key — no-op, don't throw
+
+    track.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.toggle('is-active', b === button);
+    });
+
+    current = key;
+    position(button, !!opts.instant);
+  }
+
+  function refresh() {
+    // call on resize / orientation change / container layout shifts
+    if (current) position(buttonFor(current), true);
+  }
+
+  // Wire direct clicks (optional — remove if your buttons already
+  // trigger navigation elsewhere and call goTo() themselves)
+  track.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      goTo(btn.getAttribute('data-page'));
+    });
+  });
+
+  // Wire the decoupled event path — this is what lets swipe/route/back-
+  // button navigation drive the pill without touching this file again
+  document.addEventListener('app:pagechange', function (e) {
+    if (e.detail && e.detail.page) goTo(e.detail.page, { instant: !!e.detail.instant });
+  });
+
+  window.addEventListener('resize', refresh);
+  window.addEventListener('orientationchange', refresh);
+  window.addEventListener('DOMContentLoaded', function () {
+    goTo('permit', { instant: true });
+  });
+
+  return { goTo: goTo, refresh: refresh };
+})();
+</script>
+
+</body>
+</html>
 <body class="lock-scroll">
 
 <div class="status-bar-fill"></div>
@@ -504,7 +713,7 @@ body.lock-scroll, html.lock-scroll {
       <div class="pc-lock-wrap">
         <svg class="pc-lock-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Locked padlock">
           <!-- Shortened shackle with exact color #42b12a -->
-       <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>
+       <path d="M32 42 V40 a18 18 0 0 1 36 0 v2" fill="none" stroke="#42b12a" stroke-width="9" stroke-linecap="round"/>-linecap="round"/>
           <!-- Body made nearly square (rx="1.5") -->
           <rect x="18" y="40" width="64" height="46" rx="1.5" fill="#42b12a"/>
           <circle cx="50" cy="60" r="7" fill="#1E2A38"/>
@@ -616,7 +825,7 @@ body.lock-scroll, html.lock-scroll {
     <div class="refresh-bar" data-refresh-time>Last refreshed: Wed 29 Jul 2026 9:46pm</div>
     <div class="content">
         <div class="image-container">
-            <img src="identity4" alt="">
+            <img src="identity3.jpg" alt="">
             <a href="#" class="invisible-button btn-permit"   data-target="permit"></a>
             <a href="#" class="invisible-button btn-identity" data-target="identity"></a>
             <a href="#" class="invisible-button btn-age"      data-target="age"></a>
@@ -668,16 +877,6 @@ body.lock-scroll, html.lock-scroll {
         age: 'Age'
     };
     var screenFadeDuration = 280;
-
-    // ===== Pill sizing knobs =====
-    // How far the dark pill extends past the invisible button's own edges,
-    // in pixels. Raise PILL_EXPAND_X to make the pill wider; raise
-    // PILL_EXPAND_Y if it's not filling the full height of the drawn track
-    // in your background image. Since your track is baked into an image
-    // (not built in CSS), these are the two numbers to nudge until the
-    // pill visually matches the artwork — start here, adjust by eye.
-    var PILL_EXPAND_X = 10;
-    var PILL_EXPAND_Y = 4;
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
  function getFormattedRefreshTime() {
@@ -800,10 +999,10 @@ body.lock-scroll, html.lock-scroll {
         }
 
         segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - PILL_EXPAND_X) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop - PILL_EXPAND_Y) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + PILL_EXPAND_X * 2) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight + PILL_EXPAND_Y * 2) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - 4) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop + 3) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + 6) + 'px');
+        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight - 3) + 'px');
         segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
         indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
         segmentedOverlay.classList.add('is-ready');
