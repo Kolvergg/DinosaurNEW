@@ -437,80 +437,6 @@ body.lock-scroll, html.lock-scroll {
 #screen-verify .btn-age      { left: 67.7%; top: 48%; width: 26.3%; height: 4.5%; }
 
 /* ===== Floating segmented-control overlay ===== */
-.segmented-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    z-index: 60;
-    pointer-events: none;
-    opacity: 0;
-}
-.segmented-overlay.is-ready { opacity: 1; }
-.indicator-mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--indicator-width, 0px);
-    height: var(--indicator-height, 0px);
-    border-radius: 999px;
-    background: #253544;
-    transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
-    transition:
-        transform 330ms cubic-bezier(.2,.8,.2,1),
-        width 330ms cubic-bezier(.2,.8,.2,1),
-        height 330ms cubic-bezier(.2,.8,.2,1);
-    will-change: transform, width, height;
-}
-.indicator-pill {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: inherit;
-    background: #253544;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
-    overflow: hidden;
-}
-.indicator-label {
-     font-family: 'SatoshiBold', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #fff;
-    font-size: var(--indicator-font-size, 14px);
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-    text-align: center;
-}
-.segmented-overlay.is-instant .indicator-mask {
-    transition: none;
-}
-</style>
-</head>
-
-     <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Pill Slider — exact reference</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f4f5f7; padding:60px 24px; }
-
-  /* ============================================================
-     SPEC (v2 — adjusted per feedback: wider pill that fully fills
-     the track's interior zone, slower/smoother settle)
-     - duration:        520ms
-     - easing:          cubic-bezier(.22, 1, .36, 1)   (smooth decelerate, no overshoot)
-     - pill sizing:     fills full track interior height (track height minus
-                         track padding), and bridges the gap between segments
-                         horizontally so there's no visible outer-pill strip
-                         around it — see position() in the script below
-     - pill color:      #253544
-     - label:           #ffffff, weight 600
-     - corner radius:   999px (full pill)
-     ============================================================ */
-
   .pill-track {
     position: relative;
     display: inline-flex;
@@ -568,134 +494,8 @@ body.lock-scroll, html.lock-scroll {
   }
 
   .demo-note { max-width: 520px; margin: 24px auto 0; font-size: 13px; color: #8a94a3; text-align:center; }
-</style>
+</style>     
 </head>
-<body>
-
-<div style="display:flex; justify-content:center;">
-  <div class="pill-track" id="pillTrack" data-pill-track>
-    <button class="tab-btn is-active" data-page="permit">Permit</button>
-    <button class="tab-btn" data-page="identity">Identity</button>
-    <button class="tab-btn" data-page="age">Age</button>
-
-    <div class="segmented-overlay" id="segmentedOverlay" aria-hidden="true">
-      <div class="indicator-mask"></div>
-    </div>
-  </div>
-</div>
-
-<p class="demo-note">
-  Click the tabs, or open the console and run <code>PillIndicator.goTo('age')</code> —
-  both drive the exact same animation. That's the part to wire into your
-  navigation/routing code.
-</p>
-
-<script>
-/* ============================================================
-   PillIndicator — page-agnostic segmented slider
-
-   Does NOT assume clicks are the only way pages change. Call
-   PillIndicator.goTo(key) from anywhere (route change, swipe
-   handler, back button, etc.) OR just dispatch:
-
-     document.dispatchEvent(new CustomEvent('app:pagechange', {
-       detail: { page: 'identity' }
-     }));
-
-   and it will follow automatically — this is the fix for "the
-   slider doesn't follow when I flick between pages": your old
-   code only moved on a direct click of a [data-target] button.
-   ============================================================ */
-window.PillIndicator = (function () {
-  var track = document.querySelector('[data-pill-track]');
-  var overlay = track.querySelector('.segmented-overlay');
-  var mask = track.querySelector('.indicator-mask');
-  var current = null;
-
-  function buttonFor(key) {
-    return track.querySelector('[data-page="' + key + '"]');
-  }
-
-  function position(button, instant) {
-    if (!button || !button.offsetWidth) {
-      overlay.classList.remove('is-ready');
-      return;
-    }
-
-    // Read the track's own padding straight from computed style instead of
-    // hardcoding it, so this still works if you change the CSS later.
-    var trackStyle = getComputedStyle(track);
-    var padLeft = parseFloat(trackStyle.paddingLeft) || 0;
-    var padTop = parseFloat(trackStyle.paddingTop) || 0;
-    var padBottom = parseFloat(trackStyle.paddingBottom) || 0;
-    var gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
-
-    var buttons = Array.prototype.slice.call(track.querySelectorAll('.tab-btn'));
-    var index = buttons.indexOf(button);
-    var isFirst = index === 0;
-    var isLast = index === buttons.length - 1;
-
-    // Bridge half the inter-segment gap on each side so the pill has no
-    // visible seam against its neighbours; snap flush to the track's own
-    // padding on the outer edges instead of leaving a strip of background
-    // showing around it.
-    var left = isFirst ? padLeft : (button.offsetLeft - gap / 2);
-    var right = isLast
-      ? (track.clientWidth - padLeft)
-      : (button.offsetLeft + button.offsetWidth + gap / 2);
-
-    overlay.classList.toggle('is-instant', !!instant);
-    overlay.style.setProperty('--indicator-x', left + 'px');
-    overlay.style.setProperty('--indicator-y', padTop + 'px');
-    overlay.style.setProperty('--indicator-width', (right - left) + 'px');
-    overlay.style.setProperty('--indicator-height', (track.clientHeight - padTop - padBottom) + 'px');
-    overlay.classList.add('is-ready');
-  }
-
-  function goTo(key, opts) {
-    opts = opts || {};
-    var button = buttonFor(key);
-    if (!button) return; // unknown page key — no-op, don't throw
-
-    track.querySelectorAll('.tab-btn').forEach(function (b) {
-      b.classList.toggle('is-active', b === button);
-    });
-
-    current = key;
-    position(button, !!opts.instant);
-  }
-
-  function refresh() {
-    // call on resize / orientation change / container layout shifts
-    if (current) position(buttonFor(current), true);
-  }
-
-  // Wire direct clicks (optional — remove if your buttons already
-  // trigger navigation elsewhere and call goTo() themselves)
-  track.querySelectorAll('.tab-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      goTo(btn.getAttribute('data-page'));
-    });
-  });
-
-  // Wire the decoupled event path — this is what lets swipe/route/back-
-  // button navigation drive the pill without touching this file again
-  document.addEventListener('app:pagechange', function (e) {
-    if (e.detail && e.detail.page) goTo(e.detail.page, { instant: !!e.detail.instant });
-  });
-
-  window.addEventListener('resize', refresh);
-  window.addEventListener('orientationchange', refresh);
-  window.addEventListener('DOMContentLoaded', function () {
-    goTo('permit', { instant: true });
-  });
-
-  return { goTo: goTo, refresh: refresh };
-})();
-</script>
-
-</body>
-</html>
 <body class="lock-scroll">
 
 <div class="status-bar-fill"></div>
@@ -862,20 +662,31 @@ window.PillIndicator = (function () {
         </div>
     </div>
 </div>
+<body>
+
+<div style="display:flex; justify-content:center;">
+  <div class="pill-track" id="pillTrack" data-pill-track>
+    <button class="tab-btn is-active" data-page="permit">Permit</button>
+    <button class="tab-btn" data-page="identity">Identity</button>
+    <button class="tab-btn" data-page="age">Age</button>
+
+    <div class="segmented-overlay" id="segmentedOverlay" aria-hidden="true">
+      <div class="indicator-mask"></div>
+    </div>
+  </div>
+</div>
+
+<p class="demo-note">
+  Click the tabs, or open the console and run <code>PillIndicator.goTo('age')</code> —
+  both drive the exact same animation. That's the part to wire into your
+  navigation/routing code.
+</p>
 
 <script>
 (function () {
     var app = document.getElementById('app');
     var verifyTimerInterval = null;
-    var segmentedOverlay = document.querySelector('.segmented-overlay');
-    var indicatorLabel = segmentedOverlay.querySelector('.indicator-label');
-    var indicatorTarget = 'permit';
-    var indicatorFrame = null;
-    var indicatorLabels = {
-        permit: 'Permit',
-        identity: 'Identity',
-        age: 'Age'
-    };
+  
     var screenFadeDuration = 280;
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
@@ -968,59 +779,6 @@ window.PillIndicator = (function () {
         landing.style.transform = 'translateX(0)';
     }
 
-    function isSegmentTarget(name) {
-        return name === 'permit' || name === 'identity' || name === 'age';
-    }
-
-    function isSegmentScreen(screen) {
-        return screen && /^screen-(permit|identity|age)$/.test(screen.id);
-    }
-
-    function getVisibleSegmentButton(name) {
-        var screen = app.querySelector('.screen.active');
-        if (!screen || !/^screen-(permit|identity|age)$/.test(screen.id)) return null;
-        return screen ? screen.querySelector('.btn-' + name) : null;
-    }
-
-    function positionIndicator(button, instant) {
-        if (!button) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        var container = button.closest('.image-container');
-        if (!container || !button.offsetWidth || !button.offsetHeight) {
-            segmentedOverlay.classList.remove('is-ready');
-            return;
-        }
-
-        if (segmentedOverlay.parentNode !== container) {
-            container.appendChild(segmentedOverlay);
-        }
-
-        segmentedOverlay.classList.toggle('is-instant', !!instant);
-        segmentedOverlay.style.setProperty('--indicator-x', (button.offsetLeft - 4) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-y', (button.offsetTop + 3) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-width', (button.offsetWidth + 6) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-height', (button.offsetHeight - 3) + 'px');
-        segmentedOverlay.style.setProperty('--indicator-font-size', Math.max(12, Math.min(16, button.offsetHeight * 0.38)) + 'px');
-        indicatorLabel.textContent = indicatorLabels[indicatorTarget] || '';
-        segmentedOverlay.classList.add('is-ready');
-
-        if (instant) {
-            requestAnimationFrame(function () {
-                segmentedOverlay.classList.remove('is-instant');
-            });
-        }
-    }
-
-    function updateIndicator(instant) {
-        if (indicatorFrame) cancelAnimationFrame(indicatorFrame);
-        indicatorFrame = requestAnimationFrame(function () {
-            indicatorFrame = null;
-            positionIndicator(getVisibleSegmentButton(indicatorTarget), instant);
-        });
-    }
 
     function prepareLeavingScreen(screen) {
         var rect = screen.getBoundingClientRect();
@@ -1147,55 +905,10 @@ window.PillIndicator = (function () {
 
     // Landing screen's button triggers the 0.5-second loader
     // then switches screen in-app instead of navigating.
-    document.querySelector('[data-enter]').addEventListener('click', function (e) {
-        e.preventDefault();
-        showLoaderThen('permit', function() {
-            indicatorTarget = 'permit';
-            switchScreen('permit');
-            updateIndicator(true);
-        });
-    });
+ 
 
     // All other in-app buttons
-    app.querySelectorAll('[data-target]').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
 
-            var target = link.getAttribute('data-target');
-            if (isSegmentTarget(target)) indicatorTarget = target;
-
-            function doSwitch() {
-                switchScreen(target);
-                updateIndicator(false);
-            }
-
-            if (window.scrollY > 120) {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-
-                setTimeout(doSwitch, 250);
-            } else {
-                doSwitch();
-            }
-        });
-    });
-
-    app.querySelectorAll('[data-back]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            switchScreen('landing');
-            updateIndicator(true);
-        });
-    });
-
-    app.querySelectorAll('[data-close]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            indicatorTarget = 'permit';
-            switchScreen('permit');
-            updateIndicator(false);
-        });
-    });
 // Watch for scrolling to toggle the header shadow
     window.addEventListener('scroll', function () {
         var headers = document.querySelectorAll('.header');
@@ -1210,13 +923,118 @@ window.PillIndicator = (function () {
             }
         });
     });
-    window.addEventListener('resize', function () { updateIndicator(true); });
-    updateIndicator(true);
+
 
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
     document.addEventListener('gestureend', function (e) { e.preventDefault(); });
 })();
+
+     <script>
+/* ============================================================
+   PillIndicator — page-agnostic segmented slider
+
+   Does NOT assume clicks are the only way pages change. Call
+   PillIndicator.goTo(key) from anywhere (route change, swipe
+   handler, back button, etc.) OR just dispatch:
+
+     document.dispatchEvent(new CustomEvent('app:pagechange', {
+       detail: { page: 'identity' }
+     }));
+
+   and it will follow automatically — this is the fix for "the
+   slider doesn't follow when I flick between pages": your old
+   code only moved on a direct click of a [data-target] button.
+   ============================================================ */
+window.PillIndicator = (function () {
+  var track = document.querySelector('[data-pill-track]');
+  var overlay = track.querySelector('.segmented-overlay');
+  var mask = track.querySelector('.indicator-mask');
+  var current = null;
+
+  function buttonFor(key) {
+    return track.querySelector('[data-page="' + key + '"]');
+  }
+
+  function position(button, instant) {
+    if (!button || !button.offsetWidth) {
+      overlay.classList.remove('is-ready');
+      return;
+    }
+
+    // Read the track's own padding straight from computed style instead of
+    // hardcoding it, so this still works if you change the CSS later.
+    var trackStyle = getComputedStyle(track);
+    var padLeft = parseFloat(trackStyle.paddingLeft) || 0;
+    var padTop = parseFloat(trackStyle.paddingTop) || 0;
+    var padBottom = parseFloat(trackStyle.paddingBottom) || 0;
+    var gap = parseFloat(trackStyle.columnGap || trackStyle.gap) || 0;
+
+    var buttons = Array.prototype.slice.call(track.querySelectorAll('.tab-btn'));
+    var index = buttons.indexOf(button);
+    var isFirst = index === 0;
+    var isLast = index === buttons.length - 1;
+
+    // Bridge half the inter-segment gap on each side so the pill has no
+    // visible seam against its neighbours; snap flush to the track's own
+    // padding on the outer edges instead of leaving a strip of background
+    // showing around it.
+    var left = isFirst ? padLeft : (button.offsetLeft - gap / 2);
+    var right = isLast
+      ? (track.clientWidth - padLeft)
+      : (button.offsetLeft + button.offsetWidth + gap / 2);
+
+    overlay.classList.toggle('is-instant', !!instant);
+    overlay.style.setProperty('--indicator-x', left + 'px');
+    overlay.style.setProperty('--indicator-y', padTop + 'px');
+    overlay.style.setProperty('--indicator-width', (right - left) + 'px');
+    overlay.style.setProperty('--indicator-height', (track.clientHeight - padTop - padBottom) + 'px');
+    overlay.classList.add('is-ready');
+  }
+
+  function goTo(key, opts) {
+    opts = opts || {};
+    var button = buttonFor(key);
+    if (!button) return; // unknown page key — no-op, don't throw
+
+    track.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.toggle('is-active', b === button);
+    });
+
+    current = key;
+    position(button, !!opts.instant);
+  }
+
+  function refresh() {
+    // call on resize / orientation change / container layout shifts
+    if (current) position(buttonFor(current), true);
+  }
+
+  // Wire direct clicks (optional — remove if your buttons already
+  // trigger navigation elsewhere and call goTo() themselves)
+  track.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      goTo(btn.getAttribute('data-page'));
+    });
+  });
+
+  // Wire the decoupled event path — this is what lets swipe/route/back-
+  // button navigation drive the pill without touching this file again
+  document.addEventListener('app:pagechange', function (e) {
+    if (e.detail && e.detail.page) goTo(e.detail.page, { instant: !!e.detail.instant });
+  });
+
+  window.addEventListener('resize', refresh);
+  window.addEventListener('orientationchange', refresh);
+  window.addEventListener('DOMContentLoaded', function () {
+    goTo('permit', { instant: true });
+  });
+
+  return { goTo: goTo, refresh: refresh };
+})();
+</script>
+
 </script>
 </body>
 </html>
+
