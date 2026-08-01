@@ -109,19 +109,14 @@ body.lock-scroll, html.lock-scroll {
     background-color: #F7F9F7;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
+    display: none; 
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 180ms ease;
 }
 #screen-loader.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    display: flex !important;
+}
 }display: flex !important;
 }
 .loader-spinner {
@@ -842,37 +837,32 @@ body.lock-scroll, html.lock-scroll {
     }
 
 function showLoaderThen(targetScreenName, callback) {
+        var current = app.querySelector('.screen.active');
         var loader = document.getElementById('screen-loader');
-        var LOADER_FADE = 180; // must match the CSS transition on #screen-loader
-        var HOLD = 320;        // keeps total wait close to the original 500ms
-
+        
+        // Instantly hide current screen
+        if (current) current.classList.remove('active', 'entering');
+        
+        // Show the loader and lock the screen
         loader.classList.add('active');
         setLock(true);
-
-        // Wait until the loader has fully faded in before touching the
-        // screen underneath — this is what removes the white flash, since
-        // the swap now happens while completely hidden behind the loader.
-        setTimeout(function () {
-            var current = app.querySelector('.screen.active');
-            if (current) current.classList.remove('active', 'entering');
-
-            setTimeout(function () {
-                loader.classList.remove('active'); // fades back out via CSS
-                if (callback) {
-                    callback();
-                } else {
-                    switchScreen(targetScreenName);
-                }
-            }, HOLD);
-        }, LOADER_FADE);
+        
+        // Wait exactly 0.5 seconds (500ms), then proceed
+        setTimeout(function() {
+            loader.classList.remove('active');
+            if (callback) {
+                callback();
+            } else {
+                switchScreen(targetScreenName);
+            }
+        }, 500);
     }
 
    function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
         if (!next || next === current) return;
-        var softSwap = !!current; // crossfade on every transition, not just permit/identity/age
-
+     var softSwap = isSegmentTarget(name) && isSegmentScreen(current);
         if (current && softSwap) {
             prepareLeavingScreen(current);
             setTimeout(function () { clearLeavingScreen(current); }, screenFadeDuration + 20);
