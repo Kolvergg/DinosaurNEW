@@ -78,12 +78,12 @@ body {
 .screen.entering {
     position: relative;
     z-index: 2;
-    animation: screenFadeIn 0.14s cubic-bezier(.2,.8,.2,1);
+    animation: screenFadeIn 0.28s cubic-bezier(.2,.8,.2,1);
 }
 .screen.leaving {
     display: block;
     pointer-events: none;
-    animation: screenFadeOut 0.14s cubic-bezier(.2,.8,.2,1) forwards;
+    animation: screenFadeOut 0.28s cubic-bezier(.2,.8,.2,1) forwards;
 }
 @keyframes screenFadeIn {
     from { opacity: 0; filter: saturate(.96); }
@@ -116,8 +116,6 @@ body.lock-scroll, html.lock-scroll {
 }
 #screen-loader.active {
     display: flex !important;
-}
-}display: flex !important;
 }
 .loader-spinner {
     width: 44px;
@@ -459,10 +457,10 @@ body.lock-scroll, html.lock-scroll {
     border-radius: 999px;
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
-   transition:
-        transform 780ms cubic-bezier(.22,1,.36,1),
-        width 780ms cubic-bezier(.22,1,.36,1),
-        height 780ms cubic-bezier(.22,1,.36,1);
+    transition:
+        transform 780ms cubic-bezier(.2,.8,.2,1),
+        width 780ms cubic-bezier(.2,.8,.2,1),
+        height 780ms cubic-bezier(.2,.8,.2,1);
     will-change: transform, width, height;
 }
 .indicator-pill {
@@ -670,7 +668,7 @@ body.lock-scroll, html.lock-scroll {
         identity: 'Identity',
         age: 'Age'
     };
-   var screenFadeDuration = 140; // fast crossfade instead of a hard cut
+    var screenFadeDuration = 280;
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
  function getFormattedRefreshTime() {
@@ -836,7 +834,7 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
-function showLoaderThen(targetScreenName, callback) {
+    function showLoaderThen(targetScreenName, callback) {
         var current = app.querySelector('.screen.active');
         var loader = document.getElementById('screen-loader');
         
@@ -858,11 +856,12 @@ function showLoaderThen(targetScreenName, callback) {
         }, 500);
     }
 
-   function switchScreen(name) {
+    function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
         if (!next || next === current) return;
-     var softSwap = isSegmentTarget(name) && isSegmentScreen(current);
+        var softSwap = isSegmentTarget(name) && isSegmentScreen(current);
+
         if (current && softSwap) {
             prepareLeavingScreen(current);
             setTimeout(function () { clearLeavingScreen(current); }, screenFadeDuration + 20);
