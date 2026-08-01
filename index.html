@@ -668,7 +668,7 @@ body.lock-scroll, html.lock-scroll {
         identity: 'Identity',
         age: 'Age'
     };
-    var screenFadeDuration = 280;
+   var screenFadeDuration = 140; // fast crossfade instead of a hard cut
 
     // Generates the timestamp dynamically matching "Last refresh: Wed 29 Jul 2026 9:46pm"
  function getFormattedRefreshTime() {
@@ -856,11 +856,11 @@ body.lock-scroll, html.lock-scroll {
         }, 500);
     }
 
-    function switchScreen(name) {
+   function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
         if (!next || next === current) return;
-        var softSwap = isSegmentTarget(name) && isSegmentScreen(current);
+        var softSwap = !!current; // crossfade on every transition, not just permit/identity/age
 
         if (current && softSwap) {
             prepareLeavingScreen(current);
