@@ -78,12 +78,12 @@ body {
 .screen.entering {
     position: relative;
     z-index: 2;
-    animation: screenFadeIn 0.28s cubic-bezier(.2,.8,.2,1);
+    animation: screenFadeIn 0.14s cubic-bezier(.2,.8,.2,1);
 }
 .screen.leaving {
     display: block;
     pointer-events: none;
-    animation: screenFadeOut 0.28s cubic-bezier(.2,.8,.2,1) forwards;
+    animation: screenFadeOut 0.14s cubic-bezier(.2,.8,.2,1) forwards;
 }
 @keyframes screenFadeIn {
     from { opacity: 0; filter: saturate(.96); }
@@ -109,13 +109,20 @@ body.lock-scroll, html.lock-scroll {
     background-color: #F7F9F7;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    display: none; 
+    display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 180ms ease;
 }
 #screen-loader.active {
-    display: flex !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}display: flex !important;
 }
 .loader-spinner {
     width: 44px;
@@ -458,9 +465,9 @@ body.lock-scroll, html.lock-scroll {
     background: #253544;
     transform: translate3d(var(--indicator-x, 0px), var(--indicator-y, 0px), 0);
    transition:
-        transform 680ms cubic-bezier(.22,1,.36,1),
-        width 680ms cubic-bezier(.22,1,.36,1),
-        height 680ms cubic-bezier(.22,1,.36,1);
+        transform 780ms cubic-bezier(.22,1,.36,1),
+        width 780ms cubic-bezier(.22,1,.36,1),
+        height 780ms cubic-bezier(.22,1,.36,1);
     will-change: transform, width, height;
 }
 .indicator-pill {
@@ -834,26 +841,30 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
-    function showLoaderThen(targetScreenName, callback) {
-        var current = app.querySelector('.screen.active');
+function showLoaderThen(targetScreenName, callback) {
         var loader = document.getElementById('screen-loader');
-        
-        // Instantly hide current screen
-        if (current) current.classList.remove('active', 'entering');
-        
-        // Show the loader and lock the screen
+        var LOADER_FADE = 180; // must match the CSS transition on #screen-loader
+        var HOLD = 320;        // keeps total wait close to the original 500ms
+
         loader.classList.add('active');
         setLock(true);
-        
-        // Wait exactly 0.5 seconds (500ms), then proceed
-        setTimeout(function() {
-            loader.classList.remove('active');
-            if (callback) {
-                callback();
-            } else {
-                switchScreen(targetScreenName);
-            }
-        }, 500);
+
+        // Wait until the loader has fully faded in before touching the
+        // screen underneath — this is what removes the white flash, since
+        // the swap now happens while completely hidden behind the loader.
+        setTimeout(function () {
+            var current = app.querySelector('.screen.active');
+            if (current) current.classList.remove('active', 'entering');
+
+            setTimeout(function () {
+                loader.classList.remove('active'); // fades back out via CSS
+                if (callback) {
+                    callback();
+                } else {
+                    switchScreen(targetScreenName);
+                }
+            }, HOLD);
+        }, LOADER_FADE);
     }
 
    function switchScreen(name) {
