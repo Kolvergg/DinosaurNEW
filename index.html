@@ -117,6 +117,13 @@ body.lock-scroll, html.lock-scroll {
 #screen-loader.active {
     display: flex !important;
 }
+#screen-loader.slide-in-loader {
+    animation: loaderSlideIn 0.45s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes loaderSlideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
 .loader-spinner {
     width: 44px;
     height: 44px;
@@ -839,8 +846,7 @@ body.lock-scroll, html.lock-scroll {
         screen.style.width = '';
         screen.style.zIndex = '';
     }
-
-    function showLoaderThen(targetScreenName, callback) {
+function showLoaderThen(targetScreenName, callback, slideLoader) {
         var current = app.querySelector('.screen.active');
         var loader = document.getElementById('screen-loader');
         
@@ -848,12 +854,19 @@ body.lock-scroll, html.lock-scroll {
         if (current) current.classList.remove('active', 'entering');
         
         // Show the loader and lock the screen
+        loader.classList.remove('slide-in-loader');
         loader.classList.add('active');
         setLock(true);
+
+        if (slideLoader) {
+            void loader.offsetWidth; // force reflow so the animation restarts every time
+            loader.classList.add('slide-in-loader');
+        }
         
-        // Wait exactly 0.5 seconds (500ms), then proceed
+        // Wait exactly 0.5 seconds (500ms), then proceed — same duration
+        // as before, the slide animation (0.45s) finishes within it
         setTimeout(function() {
-            loader.classList.remove('active');
+            loader.classList.remove('active', 'slide-in-loader');
             if (callback) {
                 callback();
             } else {
@@ -999,18 +1012,13 @@ body.lock-scroll, html.lock-scroll {
         });
     });
 // Watch for scrolling to toggle the header shadow
-    window.addEventListener('scroll', function () {
-        var headers = document.querySelectorAll('.header');
-        // If scrolled more than 5 pixels down, add the shadow
-        var isScrolled = window.scrollY > 5; 
-        
-        headers.forEach(function (header) {
-            if (isScrolled) {
-                header.classList.add('is-scrolled');
-            } else {
-                header.classList.remove('is-scrolled');
-            }
-        });
+   document.querySelector('[data-enter]').addEventListener('click', function (e) {
+        e.preventDefault();
+        showLoaderThen('permit', function() {
+            indicatorTarget = 'permit';
+            switchScreen('permit');
+            updateIndicator(true);
+        }, true); // slide the loader itself in for this transition
     });
     window.addEventListener('resize', function () { updateIndicator(true); });
     updateIndicator(true);
