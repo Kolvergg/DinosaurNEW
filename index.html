@@ -114,12 +114,25 @@ body.lock-scroll, html.lock-scroll {
     justify-content: center;
     z-index: 10000;
 }
+#screen-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    transition: none !important; /* Prevents loader from sliding back out on removal */
+}
+
 #screen-loader.active {
     display: flex !important;
+    transform: translateX(0); /* Sits firmly covering the screen */
 }
+
 #screen-loader.slide-in-loader {
     animation: loaderSlideIn 0.45s cubic-bezier(.2,.8,.2,1) forwards;
 }
+
 @keyframes loaderSlideIn {
     from { transform: translateX(100%); }
     to { transform: translateX(0); }
@@ -845,12 +858,11 @@ body.lock-scroll, html.lock-scroll {
         screen.style.left = '';
         screen.style.width = '';
         screen.style.zIndex = '';
-    }
 function showLoaderThen(targetScreenName, callback, slideLoader) {
     var current = app.querySelector('.screen.active');
     var loader = document.getElementById('screen-loader');
 
-    // 1. Show loader (it slides over the current screen instead of a blank background)
+    // 1. Slide the loader in over the current screen
     loader.classList.remove('slide-in-loader');
     loader.classList.add('active');
     setLock(true);
@@ -858,27 +870,35 @@ function showLoaderThen(targetScreenName, callback, slideLoader) {
     if (slideLoader) {
         void loader.offsetWidth; // force reflow
         loader.classList.add('slide-in-loader');
-    } else if (current) {
-        // If not sliding, hide current screen instantly as normal
-        current.classList.remove('active', 'entering');
     }
 
+    // 2. Once the loader completely covers the screen (at 500ms)
     setTimeout(function() {
-        // 2. Clean up current screen
-        if (current) current.classList.remove('active', 'entering');
+        // Deactivate current screen
+        if (current) {
+            current.classList.remove('active', 'entering');
+        }
 
-        // 3. Swap to target screen BEHIND the fully covered loader
         if (callback) {
             callback();
         } else {
-            switchScreen(targetScreenName);
+            // Find target screen and show it INSTANTLY (bypassing switchScreen animation)
+            var target = document.getElementById(targetScreenName) || app.querySelector('#' + targetScreenName);
+            
+            if (target) {
+                // Ensure no slide/entering classes are attached to target
+                target.classList.remove('entering', 'slide-in', 'slide-out');
+                target.classList.add('active');
+            } else {
+                // Fallback if target element isn't directly selectable
+                switchScreen(targetScreenName);
+            }
         }
 
-        // 4. Reveal the new screen instantly
+        // 3. Instantly remove loader to reveal the already-placed static main page
         loader.classList.remove('active', 'slide-in-loader');
     }, 500);
 }
-
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
