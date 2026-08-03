@@ -117,6 +117,13 @@ body.lock-scroll, html.lock-scroll {
 #screen-loader.active {
     display: flex !important;
 }
+#screen-loader.slide-in-loader {
+    animation: loaderSlideIn 0.45s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes loaderSlideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
 .loader-spinner {
     width: 44px;
     height: 44px;
@@ -834,27 +841,33 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
-    function showLoaderThen(targetScreenName, callback) {
-        var current = app.querySelector('.screen.active');
-        var loader = document.getElementById('screen-loader');
-        
-        // Instantly hide current screen
-        if (current) current.classList.remove('active', 'entering');
-        
-        // Show the loader and lock the screen
-        loader.classList.add('active');
-        setLock(true);
-        
-        // Wait exactly 0.5 seconds (500ms), then proceed
-        setTimeout(function() {
-            loader.classList.remove('active');
-            if (callback) {
-                callback();
-            } else {
-                switchScreen(targetScreenName);
-            }
-        }, 500);
+ function showLoaderThen(targetScreenName, callback, slideLoader) {
+    var current = app.querySelector('.screen.active');
+    var loader = document.getElementById('screen-loader');
+
+    if (current) {
+        current.classList.remove('active', 'entering');
     }
+
+    loader.classList.remove('slide-in-loader');
+    loader.classList.add('active');
+    setLock(true);
+
+    if (slideLoader) {
+        void loader.offsetWidth;
+        loader.classList.add('slide-in-loader');
+    }
+
+    setTimeout(function () {
+        loader.classList.remove('active', 'slide-in-loader');
+
+        if (callback) {
+            callback();
+        } else {
+            switchScreen(targetScreenName, true);
+        }
+    }, 500);
+}
 
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
