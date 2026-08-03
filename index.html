@@ -858,19 +858,34 @@ body.lock-scroll, html.lock-scroll {
         screen.style.left = '';
         screen.style.width = '';
         screen.style.zIndex = '';
+    }
 function showLoaderThen(targetScreenName, callback, slideLoader) {
     var current = app.querySelector('.screen.active');
     var loader = document.getElementById('screen-loader');
 
-    // 1. Slide the loader in over the current screen
+    if (current) {
+        current.classList.remove('active', 'entering');
+    }
+
     loader.classList.remove('slide-in-loader');
     loader.classList.add('active');
     setLock(true);
 
     if (slideLoader) {
-        void loader.offsetWidth; // force reflow
+        void loader.offsetWidth;
         loader.classList.add('slide-in-loader');
     }
+
+    setTimeout(function () {
+        loader.classList.remove('active', 'slide-in-loader');
+
+        if (callback) {
+            callback();
+        } else {
+            switchScreen(targetScreenName, true);
+        }
+    }, 500);
+}
 
     // 2. Once the loader completely covers the screen (at 500ms)
     setTimeout(function() {
