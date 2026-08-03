@@ -114,28 +114,8 @@ body.lock-scroll, html.lock-scroll {
     justify-content: center;
     z-index: 10000;
 }
-#screen-loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    transition: none !important; /* Prevents loader from sliding back out on removal */
-}
-
 #screen-loader.active {
     display: flex !important;
-    transform: translateX(0); /* Sits firmly covering the screen */
-}
-
-#screen-loader.slide-in-loader {
-    animation: loaderSlideIn 0.45s cubic-bezier(.2,.8,.2,1) forwards;
-}
-
-@keyframes loaderSlideIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
 }
 .loader-spinner {
     width: 44px;
@@ -151,13 +131,7 @@ body.lock-scroll, html.lock-scroll {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-#screen-permit.entering.slide-in-home {
-    animation: slideInFromRight 0.35s cubic-bezier(.2,.8,.2,1);
-}
-@keyframes slideInFromRight {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-}
+
 /* ===== #screen-passcode (new front gate) ===== */
 #screen-passcode {
     background: #ffffff;
@@ -859,61 +833,29 @@ body.lock-scroll, html.lock-scroll {
         screen.style.width = '';
         screen.style.zIndex = '';
     }
-function showLoaderThen(targetScreenName, callback, slideLoader) {
-    var current = app.querySelector('.screen.active');
-    var loader = document.getElementById('screen-loader');
 
-    if (current) {
-        current.classList.remove('active', 'entering');
-    }
-
-    loader.classList.remove('slide-in-loader');
-    loader.classList.add('active');
-    setLock(true);
-
-    if (slideLoader) {
-        void loader.offsetWidth;
-        loader.classList.add('slide-in-loader');
-    }
-
-    setTimeout(function () {
-        loader.classList.remove('active', 'slide-in-loader');
-
-        if (callback) {
-            callback();
-        } else {
-            switchScreen(targetScreenName, true);
-        }
-    }, 500);
-}
-
-    // 2. Once the loader completely covers the screen (at 500ms)
-    setTimeout(function() {
-        // Deactivate current screen
-        if (current) {
-            current.classList.remove('active', 'entering');
-        }
-
-        if (callback) {
-            callback();
-        } else {
-            // Find target screen and show it INSTANTLY (bypassing switchScreen animation)
-            var target = document.getElementById(targetScreenName) || app.querySelector('#' + targetScreenName);
-            
-            if (target) {
-                // Ensure no slide/entering classes are attached to target
-                target.classList.remove('entering', 'slide-in', 'slide-out');
-                target.classList.add('active');
+    function showLoaderThen(targetScreenName, callback) {
+        var current = app.querySelector('.screen.active');
+        var loader = document.getElementById('screen-loader');
+        
+        // Instantly hide current screen
+        if (current) current.classList.remove('active', 'entering');
+        
+        // Show the loader and lock the screen
+        loader.classList.add('active');
+        setLock(true);
+        
+        // Wait exactly 0.5 seconds (500ms), then proceed
+        setTimeout(function() {
+            loader.classList.remove('active');
+            if (callback) {
+                callback();
             } else {
-                // Fallback if target element isn't directly selectable
                 switchScreen(targetScreenName);
             }
-        }
+        }, 500);
+    }
 
-        // 3. Instantly remove loader to reveal the already-placed static main page
-        loader.classList.remove('active', 'slide-in-loader');
-    }, 500);
-}
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
         var next = document.getElementById('screen-' + name);
@@ -997,19 +939,15 @@ function showLoaderThen(targetScreenName, callback, slideLoader) {
 
     // Landing screen's button triggers the 0.5-second loader
     // then switches screen in-app instead of navigating.
-   document.querySelector('[data-enter]').addEventListener('click', function (e) {
+    document.querySelector('[data-enter]').addEventListener('click', function (e) {
         e.preventDefault();
         showLoaderThen('permit', function() {
             indicatorTarget = 'permit';
-            var permitScreen = document.getElementById('screen-permit');
-            permitScreen.classList.add('slide-in-home');
             switchScreen('permit');
             updateIndicator(true);
-            setTimeout(function () {
-                permitScreen.classList.remove('slide-in-home');
-            }, 400);
         });
     });
+
     // All other in-app buttons
     app.querySelectorAll('[data-target]').forEach(function (link) {
         link.addEventListener('click', function (e) {
@@ -1051,13 +989,18 @@ function showLoaderThen(targetScreenName, callback, slideLoader) {
         });
     });
 // Watch for scrolling to toggle the header shadow
-   document.querySelector('[data-enter]').addEventListener('click', function (e) {
-        e.preventDefault();
-        showLoaderThen('permit', function() {
-            indicatorTarget = 'permit';
-            switchScreen('permit');
-            updateIndicator(true);
-        }, true); // slide the loader itself in for this transition
+    window.addEventListener('scroll', function () {
+        var headers = document.querySelectorAll('.header');
+        // If scrolled more than 5 pixels down, add the shadow
+        var isScrolled = window.scrollY > 5; 
+        
+        headers.forEach(function (header) {
+            if (isScrolled) {
+                header.classList.add('is-scrolled');
+            } else {
+                header.classList.remove('is-scrolled');
+            }
+        });
     });
     window.addEventListener('resize', function () { updateIndicator(true); });
     updateIndicator(true);
