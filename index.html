@@ -847,33 +847,37 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 function showLoaderThen(targetScreenName, callback, slideLoader) {
-        var current = app.querySelector('.screen.active');
-        var loader = document.getElementById('screen-loader');
-        
-        // Instantly hide current screen
-        if (current) current.classList.remove('active', 'entering');
-        
-        // Show the loader and lock the screen
-        loader.classList.remove('slide-in-loader');
-        loader.classList.add('active');
-        setLock(true);
+    var current = app.querySelector('.screen.active');
+    var loader = document.getElementById('screen-loader');
 
-        if (slideLoader) {
-            void loader.offsetWidth; // force reflow so the animation restarts every time
-            loader.classList.add('slide-in-loader');
-        }
-        
-        // Wait exactly 0.5 seconds (500ms), then proceed — same duration
-        // as before, the slide animation (0.45s) finishes within it
-        setTimeout(function() {
-            loader.classList.remove('active', 'slide-in-loader');
-            if (callback) {
-                callback();
-            } else {
-                switchScreen(targetScreenName);
-            }
-        }, 500);
+    // 1. Show loader (it slides over the current screen instead of a blank background)
+    loader.classList.remove('slide-in-loader');
+    loader.classList.add('active');
+    setLock(true);
+
+    if (slideLoader) {
+        void loader.offsetWidth; // force reflow
+        loader.classList.add('slide-in-loader');
+    } else if (current) {
+        // If not sliding, hide current screen instantly as normal
+        current.classList.remove('active', 'entering');
     }
+
+    setTimeout(function() {
+        // 2. Clean up current screen
+        if (current) current.classList.remove('active', 'entering');
+
+        // 3. Swap to target screen BEHIND the fully covered loader
+        if (callback) {
+            callback();
+        } else {
+            switchScreen(targetScreenName);
+        }
+
+        // 4. Reveal the new screen instantly
+        loader.classList.remove('active', 'slide-in-loader');
+    }, 500);
+}
 
     function switchScreen(name) {
         var current = app.querySelector('.screen.active');
