@@ -113,16 +113,9 @@ body.lock-scroll, html.lock-scroll {
     align-items: center;
     justify-content: center;
     z-index: 10000;
+}
 #screen-loader.active {
     display: flex !important;
-}
-#screen-loader.slide-in {
-    animation: loaderSlideIn 0.45s cubic-bezier(.2,.8,.2,1) forwards;
-}
-@keyframes loaderSlideIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-
 }
 .loader-spinner {
     width: 44px;
@@ -946,13 +939,13 @@ body.lock-scroll, html.lock-scroll {
 
     // Landing screen's button triggers the 0.5-second loader
     // then switches screen in-app instead of navigating.
-  document.querySelector('[data-enter]').addEventListener('click', function (e) {
+    document.querySelector('[data-enter]').addEventListener('click', function (e) {
         e.preventDefault();
         showLoaderThen('permit', function() {
             indicatorTarget = 'permit';
             switchScreen('permit');
             updateIndicator(true);
-        }, true); // slide in from the right for the home -> main pages transition
+        });
     });
 
     // All other in-app buttons
