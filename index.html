@@ -834,20 +834,23 @@ body.lock-scroll, html.lock-scroll {
         screen.style.zIndex = '';
     }
 
-    function showLoaderThen(targetScreenName, callback) {
+  function showLoaderThen(targetScreenName, callback, slideLoader) {
         var current = app.querySelector('.screen.active');
         var loader = document.getElementById('screen-loader');
         
-        // Instantly hide current screen
         if (current) current.classList.remove('active', 'entering');
         
-        // Show the loader and lock the screen
+        loader.classList.remove('slide-in-loader');
         loader.classList.add('active');
         setLock(true);
+
+        if (slideLoader) {
+            void loader.offsetWidth;
+            loader.classList.add('slide-in-loader');
+        }
         
-        // Wait exactly 0.5 seconds (500ms), then proceed
         setTimeout(function() {
-            loader.classList.remove('active');
+            loader.classList.remove('active', 'slide-in-loader');
             if (callback) {
                 callback();
             } else {
@@ -939,13 +942,14 @@ body.lock-scroll, html.lock-scroll {
 
     // Landing screen's button triggers the 0.5-second loader
     // then switches screen in-app instead of navigating.
-    document.querySelector('[data-enter]').addEventListener('click', function (e) {
+   document.querySelector('[data-enter]').addEventListener('click', function (e) {
         e.preventDefault();
         showLoaderThen('permit', function() {
             indicatorTarget = 'permit';
             switchScreen('permit');
             updateIndicator(true);
-        });
+        }, true);
+    });
     });
 
     // All other in-app buttons
