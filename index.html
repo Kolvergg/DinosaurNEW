@@ -8,8 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <!-- Custom Home Screen icon — see note in chat about image requirements
      and the need to re-add to Home Screen once this is uploaded. -->
-<link rel="apple-touch-icon" href="vicroads.png">
+<link rel="apple-touch-icon" href="">
 <title>View details</title>
+     
 <style>
 
     @font-face {
@@ -93,7 +94,27 @@ body {
     from { opacity: 1; filter: saturate(1); }
     to { opacity: 0; filter: saturate(.96); }
 }
+#screen-splash {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+}
 
+#screen-splash.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#screen-splash img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* or 'contain' depending on your image */
+}
 /* Locks scroll while the landing screen OR the verify screen is active */
 body.lock-scroll, html.lock-scroll {
     overflow: hidden;
@@ -603,7 +624,10 @@ body.lock-scroll, html.lock-scroll {
         </div>
     </div>
   </div>
-
+     
+<div id="screen-splash" class="screen active">
+    <img src="your-image.jpg" alt="Splash">
+</div>
   <!-- ===== screen-age (was page3.html) ===== -->
   <div class="screen" id="screen-age">
     <div class="header">
@@ -656,6 +680,13 @@ body.lock-scroll, html.lock-scroll {
 </div>
 
 <script>
+
+setTimeout(function () {
+    document.getElementById('screen-splash').classList.remove('active');
+    document.getElementById('screen-passcode').classList.add('active');
+}, 800);
+     }
+     
 (function () {
     var app = document.getElementById('app');
     var verifyTimerInterval = null;
@@ -1008,6 +1039,8 @@ body.lock-scroll, html.lock-scroll {
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
     document.addEventListener('gestureend', function (e) { e.preventDefault(); });
+
+     
 })();
 </script>
 </body>
